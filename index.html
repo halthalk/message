@@ -3,10 +3,466 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محاكاة Telegram المُحسّنة (ملفات صوتية مُعدلة)</title>
+    <title>Halthalk-منصة حلتهالك</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* 🎨 تصميم Telegram الأساسي والمحسن */
+        /* ================================================= */
+        /* التنسيقات الأساسية للصفحة الرئيسية */
+        /* ================================================= */
+
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Cairo', Arial, sans-serif; 
+            background: #ffffff;
+            color: #14171a;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            transition: background 0.3s, color 0.3s;
+        }
+        body.dark-mode {
+            background: #15202b;
+            color: #ffffff;
+        }
+        body.dark-mode .header {
+            background: #15202b;
+            border-bottom: 1px solid #38444d;
+        }
+        body.dark-mode .sidebar {
+            background: #15202b;
+            border-right: 1px solid #38444d;
+        }
+        body.dark-mode .sidebar .menu-item {
+            color: #ffffff;
+        }
+        body.dark-mode .sidebar .menu-item:hover {
+            background: #1e2732;
+        }
+        body.dark-mode .welcome-section h1 {
+            color: #ffffff;
+        }
+        body.dark-mode .tribute-text {
+            color: #ffffff;
+        }
+        body.dark-mode .stat-title {
+            color: #8899a6;
+        }
+        body.dark-mode .footer {
+            color: #8899a6;
+        }
+        body.dark-mode .logo {
+            display: none;
+        }
+        body.dark-mode .logo-dark {
+            display: block;
+        }
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: #ffffff;
+            border-bottom: 1px solid #e1e8ed;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 100;
+        }
+        
+        /* إخفاء شريط التنقل القديم (Nav-links) */
+        .nav-links {
+            display: none !important; 
+        }
+        
+        /* التنسيق الجديد لزر التقارير في الهيدر (لم يعد مستخدماً في الهيدر مباشرة لكن نحافظ عليه) */
+        #reportLinkHeader {
+             color: #FF0000; /* اللون الأحمر المطلوب */
+        }
+        #reportLinkHeader:hover {
+             background-color: rgba(255, 0, 0, 0.1); 
+        }
+
+        .logo {
+            width: 120px;
+            height: 60px;
+            object-fit: contain;
+        }
+        .logo-dark {
+            width: 120px;
+            height: 60px;
+            object-fit: contain;
+            display: none;
+        }
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #1da1f2;
+            border: none;
+            color: #ffffff;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+            margin-left: 10px;
+        }
+        .theme-toggle:hover {
+            background: #0d95e8;
+        }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 70px;
+            width: 250px;
+            height: calc(100vh - 70px);
+            background: #ffffff;
+            border-right: 1px solid #e1e8ed;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        .sidebar .menu-item {
+            display: block;
+            padding: 12px 0;
+            color: #14171a;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+        .sidebar .menu-item:hover {
+            background: #f5f8fa;
+        }
+        .sidebar .menu-item i {
+            margin-left: 10px;
+        }
+        .main-content {
+            margin-left: 250px;
+            margin-top: 70px;
+            padding: 20px;
+            max-width: 600px;
+        }
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .welcome-section h1 {
+            color: #14171a;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        .buttons-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        /* التنسيق الجديد لتجميع الأزرار المتجاورة */
+        .button-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; /* للسماح لها بالنزول لسطر جديد على الشاشات الصغيرة */
+            margin-bottom: 10px; /* مسافة بين مجموعات الأزرار */
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 10px 5px;
+            font-size: 0.9em;
+            color: #ffffff;
+            background: #1da1f2;
+            border: none;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: background 0.3s;
+            cursor: pointer;
+            text-align: center; /* لضمان تمركز النص */
+        }
+        .button:hover {
+            background: #0d95e8;
+        }
+        .floating-button {
+            position: relative;
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(29, 161, 242, 0.5);
+            background: linear-gradient(45deg, #1da1f2, #0d95e8);
+            border-radius: 25px;
+            padding: 15px 30px;
+            font-size: 1em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px; /* فصله عن الأزرار اللي تحته */
+        }
+        .floating-button:hover {
+            box-shadow: 0 0 30px rgba(29, 161, 242, 0.8);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .tribute-text {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #14171a;
+            margin: 20px 0;
+            line-height: 1.5;
+        }
+        .universities-section {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        .university-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            animation: float 3s ease-in-out infinite;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .university-image:hover {
+            transform: scale(1.1);
+        }
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+            margin: 10px;
+        }
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #1da1f2;
+        }
+        .stat-title {
+            color: #657786;
+            font-size: 0.9em;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #657786;
+            font-size: 0.8em;
+        }
+        .footer a {
+            color: #1da1f2;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* ================================================= */
+        /* التنسيقات الخاصة بالهواتف المحمولة */
+        /* ================================================= */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .universities-section {
+                gap: 10px;
+            }
+            
+            /* --- التعديل الجديد لمركزة القائمة المنسدلة على الجوال --- */
+            /* لم تعد مستخدمة ولكن نبقيها احتياطاً في حال استخدام Dropdown */
+            .header-dropdown {
+                left: initial; 
+                right: initial; 
+                top: 65px; 
+                transform: translateX(-50%); 
+                margin-left: 50%; 
+                width: 90%; 
+                max-width: 300px;
+            }
+            /* ----------------------------------------------------- */
+        }
+        
+        /* ================================================= */
+        /* تنسيقات زر الخيارات الجديد في الهيدر */
+        /* ================================================= */
+        
+        /* إعداد مكان الأيقونات الجديدة (لإظهار وإخفاء القائمة المنسدلة) */
+        .nav-actions {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        /* تنسيق زر الخيارات الجديد */
+        #optionsToggle, #shareBtn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: none;
+    border: none;
+    color: #1da1f2;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+#optionsToggle:hover, #shareBtn:hover {
+    background-color: rgba(29, 161, 242, 0.1);
+}
+
+body.dark-mode #optionsToggle, body.dark-mode #shareBtn {
+    color: #ffffff;
+}
+            border-radius: 50%;
+            background: none;
+            border: none;
+            color: #1da1f2;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+        #optionsToggle:hover {
+            background-color: rgba(29, 161, 242, 0.1);
+        }
+        
+        body.dark-mode #optionsToggle {
+            color: #ffffff;
+        }
+        body.dark-mode #optionsToggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* ================================================= */
+        /* تنسيقات Modal (الخلفية الشفافة والضبابية) */
+        /* ================================================= */
+        
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4); /* شفافية أساسية */
+            backdrop-filter: blur(8px); /* تأثير ضبابي قوي للخلفية */
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+            animation: modalopen 0.4s;
+            position: relative;
+        }
+        body.dark-mode .modal-content {
+            background-color: #1e2732;
+            color: #ffffff;
+        }
+        @keyframes modalopen {
+            from {opacity: 0; transform: scale(0.8);}
+            to {opacity: 1; transform: scale(1);}
+        }
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            left: 15px;
+            top: 10px;
+        }
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #1da1f2;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        /* تنسيقات خاصة بنافذة الإشعارات والخيارات */
+        #notificationModal .modal-content, #optionsModal .modal-content {
+             max-width: 400px;
+             text-align: center;
+             padding: 40px 20px;
+        }
+
+
+        /* ================================================= */
+        /* تنسيقات Modal أضف شيء / تقرير */
+        /* ================================================= */
+        .modal-content h2 {
+            text-align: center;
+            color: #1da1f2;
+            margin-bottom: 20px;
+        }
+        .modal-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .modal-form input[type="text"],
+        .modal-form textarea {
+            width: 95%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            resize: vertical;
+            background-color: #f9f9f9;
+        }
+        body.dark-mode .modal-form input[type="text"],
+        body.dark-mode .modal-form textarea {
+            background-color: #2a313d;
+            border: 1px solid #38444d;
+            color: #ffffff;
+        }
+        .modal-form button {
+            background-color: #1da1f2;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+        .modal-form button:hover {
+            background-color: #0d95e8;
+        }
+
+        /* ================================================= */
+        /* تنسيقات Telegram-like Chat */
+        /* ================================================= */
+
         :root {
             --telegram-blue: #229ED9;
             --telegram-dark-blue: #1D7AFC;
@@ -14,34 +470,104 @@
             --text-light: #ffffff;
             --text-secondary: #b8c1d1;
             --input-bg: rgba(255, 255, 255, 0.1);
-            --bubble-self-bg: linear-gradient(135deg, var(--telegram-blue), var(--telegram-dark-blue));
+            --bubble-self-bg: linear-gradient(135deg, #1da1f2, #0d95e8); /* لون أزرق موحد */
             --bubble-other-bg: rgba(255, 255, 255, 0.15);
+            
+            /* ألوان الوضع الفاتح */
+            --light-chat-bg: #f5f5f5;
+            --light-list-bg: rgba(255, 255, 255, 0.9);
+            --light-text-color: #14171a;
+            --light-secondary-text: #657786;
         }
 
-        /* --- الأنماط الأساسية (لم تتغير) --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* تنسيقات الوضع الداكن للواجهة الجديدة */
+        body.dark-mode .chat-popup-container .popup-content, 
+        body.dark-mode .chat-messages {
+            background: linear-gradient(180deg, #0f1419 0%, var(--background-dark) 100%);
         }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f1419 0%, var(--background-dark) 100%);
-            color: var(--text-light);
-            height: 100vh;
-            overflow: hidden;
+        body.dark-mode .chat-item:hover, body.dark-mode .chat-item.active {
+            background: rgba(34, 158, 217, 0.2);
         }
-        .popup {
-            display: block;
+        body.dark-mode .message.other .message-content {
+            background: var(--bubble-other-bg);
+        }
+        body.dark-mode .input-container {
+            background: rgba(26, 31, 39, 0.95);
+        }
+        
+        /* تنسيقات الوضع الفاتح للواجهة الجديدة */
+        body:not(.dark-mode) .chat-popup-container .popup-content {
+            background: var(--light-list-bg); /* خلفية شفافة فاتحة لقائمة الدردشات */
+            border: 1px solid #e1e8ed;
+        }
+        body:not(.dark-mode) .chat-messages {
+            background: var(--light-chat-bg); /* خلفية صفحة الدردشة فاتحة */
+        }
+        
+        /* التعديل المطلوب: جعل أسماء الدردشة أحمر غامق في الوضع الفاتح */
+        body:not(.dark-mode) .chat-name {
+            color: #8B0000; 
+        }
+
+        body:not(.dark-mode) .chat-item {
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        body:not(.dark-mode) .chat-item:hover, body:not(.dark-mode) .chat-item.active {
+            background: rgba(29, 161, 242, 0.1);
+            border-right: 4px solid var(--telegram-blue);
+        }
+        body:not(.dark-mode) .last-message {
+            color: var(--light-secondary-text); 
+        }
+        body:not(.dark-mode) .messages-header {
+            color: white; 
+        }
+        body:not(.dark-mode) .input-container {
+             background: rgba(255, 255, 255, 0.95);
+             border-top: 1px solid #e1e8ed;
+        }
+        body:not(.dark-mode) .message-input-area {
+            background: #f0f0f0;
+        }
+        body:not(.dark-mode) .message-input {
+            color: var(--light-text-color);
+        }
+        body:not(.dark-mode) .action-btn {
+            color: var(--light-secondary-text);
+        }
+        body:not(.dark-mode) .message-content {
+            background: var(--bubble-self-bg);
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        body:not(.dark-mode) .message.other .message-content {
+            background: #e6e6e6; 
+            color: var(--light-text-color);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+
+        /* إخفاء المحتوى الرئيسي عند فتح الرسائل/المودال */
+        .page-hidden .header, .page-hidden .sidebar, .page-hidden .main-content {
+            display: none !important;
+        }
+
+
+        .chat-popup-container { /* تم تغيير الاسم لتجنب التعارض */
+            display: none; /* يتم التحكم به عبر JS */
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* لإضافة تأثير التعتيم والضبابية */
+            backdrop-filter: blur(8px); /* تأثير ضبابي قوي للخلفية */
             z-index: 1000;
+            justify-content: center;
+            align-items: center;
         }
         .popup-content {
-            background: linear-gradient(180deg, #0f1419 0%, var(--background-dark) 100%);
+            /* الخلفية الأساسية يتم تحديدها في الوضع الداكن والفاتح */
             margin: 2% auto;
             padding: 0;
             border-radius: 15px;
@@ -52,7 +578,7 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.5);
             border: 1px solid #2a2f3a;
         }
-        .header {
+        .header-chat {
             background: linear-gradient(90deg, var(--telegram-blue) 0%, var(--telegram-dark-blue) 100%);
             color: white;
             padding: 18px;
@@ -75,12 +601,14 @@
             padding: 16px 20px;
             cursor: pointer;
             transition: all 0.3s ease;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            /* border-bottom يتم تحديده في الوضع الداكن والفاتح */
         }
-        .chat-item:hover, .chat-item.active {
-            background: rgba(34, 158, 217, 0.2);
-            border-right: 4px solid var(--telegram-blue);
+        
+        /* لون اسم الدردشة في الوضع الداكن (افتراضياً أبيض) */
+        body.dark-mode .chat-name {
+            color: var(--text-light); 
         }
+
         .avatar {
             width: 55px;
             height: 55px;
@@ -107,7 +635,7 @@
             text-overflow: ellipsis;
         }
         .last-message {
-            color: var(--text-secondary);
+            /* اللون يتم تحديده في الوضع الداكن والفاتح */
             font-size: 14px;
             white-space: nowrap;
             overflow: hidden;
@@ -120,7 +648,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(180deg, #0f1419 0%, var(--background-dark) 100%);
+            /* الخلفية يتم تحديدها في الوضع الداكن والفاتح */
+            background: rgba(0, 0, 0, 0.5); /* أساس شفافية شاشة الدردشة */
+            backdrop-filter: blur(8px); /* تأثير ضبابي قوي للخلفية */
             z-index: 1001;
             overflow: hidden;
         }
@@ -157,7 +687,7 @@
         .message {
             margin-bottom: 16px;
             display: flex;
-            justify-content: flex-end; /* رسائل المستخدم (يمين) */
+            justify-content: flex-end;
             opacity: 0;
             animation: fadeIn 0.3s forwards;
             transform: translateY(10px);
@@ -166,14 +696,13 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .message-content {
-            background: var(--bubble-self-bg);
+            /* الخلفية يتم تحديدها في الوضع الداكن والفاتح */
             padding: 12px 18px;
             border-radius: 18px 18px 5px 18px;
             max-width: 75%;
             word-wrap: break-word;
             font-size: 15px;
             line-height: 1.4;
-            box-shadow: 0 4px 12px rgba(34, 158, 217, 0.3);
             position: relative;
         }
         
@@ -186,23 +715,22 @@
         }
         
         .message.other {
-            justify-content: flex-start !important; /* رسائل البوت (يسار) */
+            justify-content: flex-start !important;
         }
         .message.other .message-content {
-            background: var(--bubble-other-bg);
-            color: #e8ebee;
+            /* الخلفية يتم تحديدها في الوضع الداكن والفاتح */
             border-radius: 18px 18px 18px 5px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        body:not(.dark-mode) .message.other .message-content .message-attachment-info {
+            color: #444; 
         }
         .message.other .message-content .message-attachment-info {
             text-align: left; 
         }
 
-        /* --- أنماط عرض المرفقات المُرسلة --- */
         .attachment-preview {
             margin-top: 5px;
-            /* للتأكد من أن المرفق داخل الفقاعة */
             display: flex;
             flex-direction: column; 
         }
@@ -214,7 +742,6 @@
             margin-bottom: 8px;
         }
         
-        /* ⭐️ النمط الجديد للمقطع الصوتي (Voice Note Style) */
         .attachment-preview .voice-note {
             display: flex;
             align-items: center;
@@ -225,8 +752,16 @@
             max-width: 100%;
         }
         .attachment-preview .voice-note.other {
-            background: rgba(255, 255, 255, 0.1); /* خلفية أفتح لرسائل البوت */
+            /* الخلفية يتم تحديدها في الوضع الداكن والفاتح */
+            background: rgba(255, 255, 255, 0.1);
         }
+        body:not(.dark-mode) .attachment-preview .voice-note.other {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        body:not(.dark-mode) .attachment-preview .voice-duration {
+            color: #333;
+        }
+
 
         .attachment-preview .voice-play-btn {
             width: 35px;
@@ -260,11 +795,10 @@
             font-size: 12px;
             color: var(--text-light);
             flex-shrink: 0;
-            width: 35px; /* لتثبيت العرض */
+            width: 35px;
             text-align: center;
         }
 
-        /* إخفاء عنصر الـ <audio> الأصلي داخل الفقاعة */
         .attachment-preview audio {
             display: none !important;
         }
@@ -278,6 +812,16 @@
             align-items: center;
             margin-bottom: 8px;
         }
+        body:not(.dark-mode) .attachment-preview .file-card {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        body:not(.dark-mode) .attachment-preview .file-card-name {
+            color: #14171a;
+        }
+        body:not(.dark-mode) .attachment-preview .file-card-size {
+            color: #657786;
+        }
+
         .attachment-preview .file-card-icon {
             font-size: 24px;
             margin-left: 10px;
@@ -308,17 +852,16 @@
             transition: background 0.2s;
         }
         
-        /* ⭐️ زر الحذف */
         .delete-btn {
             background: none; 
             border: none; 
-            color: #ff5252; /* لون أحمر خفيف */
+            color: #ff5252;
             font-size: 14px; 
             margin-right: 5px; 
             opacity: 0.7; 
             cursor: pointer; 
             transition: opacity 0.2s, transform 0.2s;
-            align-self: flex-end; /* ليكون في أسفل الرسالة */
+            align-self: flex-end;
             padding: 0;
             line-height: 1;
         }
@@ -326,23 +869,21 @@
             opacity: 1;
             transform: scale(1.1);
         }
-        /* لضمان محاذاة فقاعة الرسالة مع زر الحذف */
         .message .message-content-wrapper {
             display: flex;
             align-items: flex-end;
         }
 
 
-        /* شريط الإدخال المحسن */
         .input-container {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(26, 31, 39, 0.95);
+            /* الخلفية يتم تحديدها في الوضع الداكن والفاتح */
             backdrop-filter: blur(20px);
             padding: 15px 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            /* الحدود يتم تحديدها في الوضع الداكن والفاتح */
             z-index: 30;
             display: flex;
         }
@@ -356,7 +897,7 @@
             flex: 1;
             display: flex;
             align-items: flex-end;
-            background: var(--input-bg);
+            /* الخلفية يتم تحديدها في الوضع الداكن والفاتح */
             border-radius: 25px;
             padding: 8px 16px;
         }
@@ -364,7 +905,7 @@
             flex: 1;
             background: none;
             border: none;
-            color: var(--text-light);
+            /* اللون يتم تحديده في الوضع الداكن والفاتح */
             font-size: 16px;
             padding: 12px 0;
             outline: none;
@@ -373,11 +914,10 @@
             line-height: 1.4;
         }
         
-        /* أزرار الإرسال والمرفقات */
         .action-btn {
             background: none;
             border: none;
-            color: var(--text-secondary);
+            /* اللون يتم تحديده في الوضع الداكن والفاتح */
             font-size: 20px;
             cursor: pointer;
             padding: 0 5px;
@@ -388,7 +928,6 @@
             color: var(--telegram-blue);
         }
         
-        /* زر المرفقات الجديد (📎) */
         #attachment-btn {
             order: -1; 
             font-size: 25px;
@@ -418,7 +957,6 @@
             box-shadow: none;
         }
         
-        /* --- قائمة المرفقات --- */
         #attachment-menu {
             position: absolute;
             bottom: 80px;
@@ -430,6 +968,10 @@
             display: none;
             z-index: 35;
         }
+        body:not(.dark-mode) #attachment-menu {
+            background: #ffffff;
+            border: 1px solid #e1e8ed;
+        }
         .attachment-option {
             padding: 10px;
             color: var(--text-light);
@@ -439,8 +981,14 @@
             display: flex;
             align-items: center;
         }
+        body:not(.dark-mode) .attachment-option {
+             color: #14171a;
+        }
         .attachment-option:hover {
             background: #3c4656;
+        }
+        body:not(.dark-mode) .attachment-option:hover {
+            background: #f5f8fa;
         }
         .attachment-icon {
             font-size: 20px;
@@ -448,10 +996,9 @@
             width: 20px;
         }
 
-        /* مؤشر تسجيل الصوت (لم يتغير) */
         #recording-indicator {
             display: none;
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
@@ -463,6 +1010,11 @@
             color: white;
             font-size: 18px;
             flex-direction: column;
+            backdrop-filter: blur(5px);
+        }
+        body:not(.dark-mode) #recording-indicator {
+            background: rgba(255, 255, 255, 0.95);
+            color: #14171a;
         }
         .recording-dot {
             width: 10px;
@@ -488,7 +1040,6 @@
             font-size: 16px;
         }
         
-        /* --- نافذة المراجعة (Preview Modal) --- */
         #preview-modal {
             display: none;
             position: fixed;
@@ -500,6 +1051,7 @@
             z-index: 1100;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(5px);
         }
         .preview-content {
             background: #1a1f27;
@@ -509,6 +1061,11 @@
             max-width: 350px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             text-align: right;
+            color: white;
+        }
+        body:not(.dark-mode) .preview-content {
+             background: #ffffff;
+             color: #14171a;
         }
         .preview-header {
             font-size: 20px;
@@ -517,7 +1074,9 @@
             border-bottom: 1px solid rgba(255,255,255,0.1);
             padding-bottom: 10px;
         }
-        /* ⭐️ تعديل حجم عناصر الوسائط في المعاينة */
+        body:not(.dark-mode) .preview-header {
+            border-bottom: 1px solid #e1e8ed;
+        }
         #preview-media {
             margin-bottom: 15px;
             max-width: 100%;
@@ -538,6 +1097,10 @@
             resize: none;
             outline: none;
         }
+        body:not(.dark-mode) .preview-caption-input {
+            background: #f0f0f0;
+            color: #14171a;
+        }
         .preview-buttons {
             display: flex;
             justify-content: space-between;
@@ -554,20 +1117,170 @@
             background: #3c4656;
             color: white;
         }
+        body:not(.dark-mode) #cancel-preview {
+            background: #e1e8ed;
+            color: #14171a;
+        }
         #send-preview {
             background: var(--telegram-blue);
             color: white;
         }
         
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: rgba(34, 158, 217, 0.5); border-radius: 3px; }
+        body:not(.dark-mode) ::-webkit-scrollbar-thumb { background: rgba(29, 161, 242, 0.8); }
+
     </style>
 </head>
 <body>
-    <div id="popup" class="popup">
+    <div class="header">
+        <div class="nav-actions">
+    <button id="optionsToggle" title="الخيارات"><i class="fas fa-ellipsis-v"></i></button>
+    <button id="shareBtn" title="مشاركة الموقع" onclick="copySiteLink()"><i class="fas fa-share-alt"></i></button>
+</div>
+        <div style="display: flex; align-items: center;">
+            <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
+            <img src="https://github.com/elmoftary-vr/Halthalk/raw/4a1dc7ecbb8371080b183f1b7b720d2a29fff926/20251205_163046.png" alt="Logo" class="logo">
+            <img src="https://raw.githubusercontent.com/elmoftary-vr/Halthalk/3232d9c52d6dcba5f5d43b88b317e503e6682d8a/20251206_234458.png" alt="Logo Dark" class="logo-dark">
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <a href="#" class="menu-item"><i class="fas fa-home"></i> الرئيسية</a>
+        <a href="https://t.me/bta3hacker" class="menu-item" target="_blank" rel="noopener noreferrer"><i class="fas fa-search"></i> الاستكشاف</a>
+        <a href="#" class="menu-item" id="notificationLinkSidebar"><i class="fas fa-bell"></i> الإشعارات</a>
+        <a href="#" class="menu-item" id="messagesLinkSidebar"><i class="fas fa-envelope"></i> الرسائل</a>
+        <a href="https://t.me/Halthalkrobot" class="menu-item" target="_blank" rel="noopener noreferrer"><i class="fas fa-user"></i> فريق الدعم</a>
+        <a href="https://t.me/Halthalk" class="menu-item" target="_blank" rel="noopener noreferrer"><i class="fas fa-info-circle"></i> قناتنا الرسمية</a>
+        <a href="#" class="menu-item" id="reportLinkSidebar"><i class="fas fa-bug"></i> إرسال تقرير / ملاحظة</a>
+        <a href="#" class="menu-item" id="addThingSidebarBtn"><i class="fas fa-plus"></i> أضف شيء</a> </div>
+
+    <div class="main-content">
+        <div class="welcome-section">
+            <h1>اهلا بك عزيزي الطالب في منصة حلتهالك</h1>
+            <p> انضم إلى اكبر منصة تعليمية في مصر !</p>
+        </div>
+
+        <div class="buttons-section">
+            <a href="https://halthalk.eyoo.org/" class="button floating-button">دخول المنصة</a>
+            
+            <div class="button-group">
+                <a href="https://t.me/A_Dk_A" class="button" style="background: #e91e63;" target="_blank" rel="noopener noreferrer">نظام لغات</a>
+                <a href="https://t.me/MA6_Z" class="button" style="background: #ff9800;" target="_blank" rel="noopener noreferrer">نظام أزهري</a>
+            </div>
+
+            <div class="button-group">
+                <a href="https://t.me/Halthalkrobot" class="button" target="_blank" rel="noopener noreferrer">فريق الدعم</a>
+                <a href="https://t.me/Halthalk" class="button" target="_blank" rel="noopener noreferrer">تحديثات المنصة</a>
+            </div>
+
+        </div>
+
+        <div class="tribute-text">
+            نحن نكن كل الفضل والحب لأساتذة كانوا سببًا في إشعال نار الأمل والمثابرة، وأيضًا هم أعمدة شامخة في الجامعات الآتية.
+        </div>
+
+        <div class="universities-section">
+            <a href="https://www.muc.edu.eg/ar" target="_blank" rel="noopener noreferrer">
+                <img src="https://raw.githubusercontent.com/elmoftary-vr/Halthalk/18be8bf95d514ff1448b40890a9145e82628b6bd/20251205_210105.png" alt="جامعة" class="university-image">
+            </a>
+            <a href="https://www.asu.edu.eg/ar" target="_blank" rel="noopener noreferrer">
+                <img src="https://github.com/elmoftary-vr/Halthalk/raw/84bc7dc1984df945100ecfe600e0c6b6110b9417/20251205_211025.png" alt="جامعة" class="university-image">
+            </a>
+            <a href="https://cu.edu.eg/ar/Home" target="_blank" rel="noopener noreferrer">
+                <img src="https://raw.githubusercontent.com/elmoftary-vr/Halthalk/b4c9610765891680e50029774974ec149952b1dd/20251205_210532.png" alt="جامعة" class="university-image">
+            </a>
+            <a href="https://www.helwan.edu.eg/" target="_blank" rel="noopener noreferrer">
+                <img src="https://github.com/elmoftary-vr/Halthalk/blob/1d2589a3948597faac405d7c496ec7b3f039ab18/20251205_205841.png?raw=true" alt="جامعة" class="university-image">
+            </a>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number" id="dailyVisits">0+</div>
+                <div class="stat-title">متوسط الدخول اليومي</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="totalMembers">0+</div>
+                <div class="stat-title">إجمالي عدد الأعضاء</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="activeStudents">0+</div>
+                <div class="stat-title">الطلاب النشطون</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <a href="https://t.me/HalthalkBot" target="_blank" rel="noopener noreferrer">جميع الحقوق محفوظة 2026</a>
+        </div>
+    </div>
+    
+    <div id="optionsModal" class="modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 40px 20px;">
+            <span class="close-btn" onclick="closeOptionsModal()">&times;</span>
+            <i class="fas fa-bars" style="font-size: 50px; color: #1da1f2; margin-bottom: 20px;"></i>
+            <h2 style="font-size: 1.5em; color: #1da1f2;">قائمة الخيارات السريعة</h2>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                 <a href="https://t.me/bta3hacker" class="button" style="background: #1da1f2; margin: 0; padding: 12px 24px;" target="_blank" rel="noopener noreferrer" onclick="closeOptionsModal()"><i class="fas fa-search"></i> الاستكشاف</a>
+                 <a href="#" class="button" id="messagesLinkOptions" style="background: #1da1f2; margin: 0; padding: 12px 24px;" onclick="closeOptionsModal()"><i class="fas fa-envelope"></i> الرسائل</a>
+                 <a href="#" class="button" id="reportLinkOptions" style="background: #ff5252; margin: 0; padding: 12px 24px;" onclick="closeOptionsModal()"><i class="fas fa-bug"></i> التقارير</a>
+                 <a href="#" class="button" id="addThingOptionsBtn" style="background: #28a745; margin: 0; padding: 12px 24px;" onclick="closeOptionsModal()"><i class="fas fa-plus"></i> أضف شئ</a>
+            </div>
+        </div>
+    </div>
+    
+    <div id="addThingModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeAddThingModal()">&times;</span>
+            <h2><i class="fas fa-plus-circle"></i> أضف شيء جديد</h2>
+            <p style="text-align: center; margin-bottom: 20px; color: #1da1f2;">شارك محتوى تعليمي، سؤال، أو اقتراح!</p>
+            <form id="addThingForm" class="modal-form">
+                <label for="thingTitle">اسمك:</label>
+                <input type="text" id="thingTitle" name="thingTitle" required>
+
+                <label for="thingLink">كم عمرك (اختياري):</label>
+                <input type="text" id="thingLink" name="thingLink">
+
+                <label for="thingDescription">الوصف / التفاصيل:</label>
+                <textarea id="thingDescription" name="thingDescription" rows="5" required></textarea>
+
+                <button type="submit"><i class="fas fa-share-square"></i> إرسال للمراجعة</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeReportModal()">&times;</span>
+            <h2><i class="fas fa-bug"></i> تقرير / ملاحظة فنية</h2>
+            <p style="text-align: center; margin-bottom: 20px; color: #ff5252;">أبلغ عن خطأ، أو أرسل ملاحظة لتحسين الأداء!</p>
+            <form id="reportForm" class="modal-form">
+                <label for="reporterName">اسمك (اختياري):</label>
+                <input type="text" id="reporterName" name="reporterName">
+
+                <label for="issueType">نوع المشكلة / الملاحظة:</label>
+                <input type="text" id="issueType" name="issueType" placeholder="مثل: خطأ في زر الرسائل، اقتراح إضافة خاصية..">
+
+                <label for="reportDescription">التفاصيل الكاملة:</label>
+                <textarea id="reportDescription" name="reportDescription" rows="5" required></textarea>
+
+                <button type="submit" style="background: #ff5252;"><i class="fas fa-paper-plane"></i> إرسال التقرير</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="notificationModal" class="modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 40px 20px;">
+            <span class="close-btn" onclick="closeNotificationModal()">&times;</span>
+            <i class="fas fa-bell" style="font-size: 50px; color: #1da1f2; margin-bottom: 20px;"></i>
+            <h2 style="font-size: 1.5em; color: #1da1f2;">لا يوجد إشعارات لك الآن</h2>
+            <p style="color: #657786;">تحقق لاحقاً لترى آخر التحديثات والأخبار الخاصة بك.</p>
+        </div>
+    </div>
+    
+    <div id="popup" class="chat-popup-container">
         <div class="popup-content">
-            <div class="header">الرسائل</div> 
+            <div class="header-chat">الرسائل</div> 
             <ul class="chat-list">
                 <li class="chat-item active" onclick="showMessages('important', this)">
                     <div class="avatar"><i class="fas fa-bullhorn"></i></div> 
@@ -639,11 +1352,287 @@
             </div>
         </div>
     </div>
-
     <script>
-        // 💡 متغيرات الثوابت
-        const BOT_TOKEN = '8490684701:AAHUk7Ayn8RmrreRbfVLX41c5nI1EhR3CxE';
-        const CHAT_ID = '7428842238';
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === 'c' || e.key === 'C' || e.key === 'v' || e.key === 'V' || e.key === 'a' || e.key === 'A')) {
+                // e.preventDefault(); // تم التعليق على هذا لمنع منع الـ Paste في حقول الإدخال
+            }
+        });
+
+        function animateCounter(element, target, duration) {
+            let start = 0;
+            const increment = target / (duration / 10);
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    start = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(start) + '+';
+            }, 10);
+        }
+
+        const themeToggleMain = document.getElementById('themeToggle');
+        const body = document.body;
+
+        function syncTheme(isDark) {
+            if (isDark) {
+                body.classList.add('dark-mode');
+                themeToggleMain.querySelector('i').className = 'fas fa-sun';
+            } else {
+                body.classList.remove('dark-mode');
+                themeToggleMain.querySelector('i').className = 'fas fa-moon';
+            }
+             localStorage.setItem('darkMode', isDark);
+        }
+
+        window.addEventListener('load', () => {
+            animateCounter(document.getElementById('dailyVisits'), 2651, 3000);
+            animateCounter(document.getElementById('totalMembers'), 500000, 3000);
+            animateCounter(document.getElementById('activeStudents'), 120000, 3000);
+            
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            syncTheme(isDarkMode);
+        });
+
+        themeToggleMain.addEventListener('click', () => {
+            const isDark = !body.classList.contains('dark-mode');
+            syncTheme(isDark);
+        });
+        
+        // =================================================
+        // الدوال الخاصة بـ Modal أضف شيء
+        // =================================================
+        const addThingModal = document.getElementById('addThingModal');
+        const addThingForm = document.getElementById('addThingForm');
+        
+        const messagesLinkSidebar = document.getElementById('messagesLinkSidebar');
+        const addThingSidebarBtn = document.getElementById('addThingSidebarBtn');
+        const chatPopup = document.getElementById('popup');
+        const telegramChatMessages = document.getElementById('messages');
+
+        // =================================================
+        // المتغيرات الجديدة الخاصة بـ Options Modal
+        // =================================================
+        const optionsModal = document.getElementById('optionsModal');
+        const optionsToggle = document.getElementById('optionsToggle');
+        const messagesLinkOptions = document.getElementById('messagesLinkOptions');
+        const addThingOptionsBtn = document.getElementById('addThingOptionsBtn');
+        const reportLinkOptions = document.getElementById('reportLinkOptions');
+        
+        // المتغيرات الجديدة الخاصة بالإشعارات
+        const notificationModal = document.getElementById('notificationModal');
+        const notificationLinkSidebar = document.getElementById('notificationLinkSidebar');
+        
+        // المتغيرات الجديدة الخاصة بالتقارير
+        const reportModal = document.getElementById('reportModal');
+        const reportForm = document.getElementById('reportForm');
+        const reportLinkSidebar = document.getElementById('reportLinkSidebar');
+        const reportLinkHeader = document.getElementById('reportLinkHeader'); // الزر القديم في الهيدر (غير مستخدم الآن)
+
+        // تعريف التوكن ومعرف المستلم الجديد لـ 'أضف شيء'
+        const ADD_THING_BOT_TOKEN = '8102433429:AAEWLBKx68nh19kWG9sEFMqFP4_cgRF9GcE'; // تم تحديث التوكن
+        const ADD_THING_CHAT_ID = '7428842238'; // تم تحديث الـ ID
+        
+        // تعريف التوكن ومعرف المستلم للتقارير (تم تحديث القيم)
+        const REPORTING_BOT_TOKEN = '8102433429:AAEWLBKx68nh19kWG9sEFMqFP4_cgRF9GcE'; 
+        const REPORTING_CHAT_ID = '7428842238'; 
+
+
+        function openAddThingModal(e) {
+            if (e) e.preventDefault();
+            closeChat(null); // تأكد من إغلاق نافذة الرسائل أولاً
+            closeNotificationModal(); // إغلاق نافذة الإشعارات
+            closeReportModal(); // إغلاق نافذة التقرير
+            closeOptionsModal(); // إغلاق نافذة الخيارات
+            addThingModal.style.display = 'flex';
+            body.classList.add('page-hidden');
+        }
+
+        function closeAddThingModal() {
+            addThingModal.style.display = 'none';
+            body.classList.remove('page-hidden');
+        }
+
+        addThingForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('thingTitle').value.trim(); 
+            const age = document.getElementById('thingLink').value.trim(); 
+            const description = document.getElementById('thingDescription').value.trim();
+            const currentTime = new Date().toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' });
+
+            const message = `
+**[✅ طلب إضافة/اقتراح جديد]**
+* **الوقت (EET):** ${currentTime}
+* **الاسم:** ${name}
+* **العمر:** ${age || 'لم يحدد'}
+* **التفاصيل:** ${description}
+`;
+            
+            sendTextToTelegram(message, ADD_THING_BOT_TOKEN, ADD_THING_CHAT_ID).then(() => {
+                alert('شكراً لك! تم إرسال طلبك بنجاح للمراجعة.');
+                addThingForm.reset();
+                closeAddThingModal();
+            }).catch(() => {
+                alert('حدث خطأ أثناء الإرسال. يرجى المحاولة لاحقاً أو إرسال المحتوى يدوياً.');
+            });
+        });
+
+        // =================================================
+        // الدوال الخاصة بـ Modal التقارير 
+        // =================================================
+
+        function openReportModal(e) {
+            if (e) e.preventDefault();
+            closeChat(null); 
+            closeAddThingModal(); 
+            closeNotificationModal(); 
+            closeOptionsModal(); // إغلاق نافذة الخيارات
+            reportModal.style.display = 'flex';
+            body.classList.add('page-hidden');
+        }
+
+        function closeReportModal() {
+            reportModal.style.display = 'none';
+            body.classList.remove('page-hidden');
+        }
+
+        reportForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('reporterName').value.trim(); 
+            const type = document.getElementById('issueType').value.trim(); 
+            const description = document.getElementById('reportDescription').value.trim();
+            const currentTime = new Date().toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' });
+
+            const message = `
+**[⚠️ تقرير فني / ملاحظة جديدة]**
+* **الوقت (EET):** ${currentTime}
+* **المرسل (اختياري):** ${name || 'مجهول'}
+* **نوع المشكلة:** ${type || 'لم يحدد'}
+* **التفاصيل:** ${description}
+`;
+            
+            sendTextToTelegram(message, REPORTING_BOT_TOKEN, REPORTING_CHAT_ID).then(() => {
+                alert('شكراً لك! تم إرسال التقرير بنجاح وسيتم العمل عليه.');
+                reportForm.reset();
+                closeReportModal();
+            }).catch(() => {
+                alert('حدث خطأ أثناء الإرسال. يرجى المحاولة لاحقاً.');
+            });
+        });
+
+
+        // =================================================
+        // الدوال الخاصة بـ Modal الإشعارات
+        // =================================================
+
+        function openNotificationModal(e) {
+            if (e) e.preventDefault();
+            closeChat(null);      // تأكد من إغلاق نافذة الرسائل أولاً
+            closeAddThingModal(); // تأكد من إغلاق نافذة أضف شيء ثانياً
+            closeReportModal(); // إغلاق نافذة التقرير
+            closeOptionsModal(); // إغلاق نافذة الخيارات
+            notificationModal.style.display = 'flex';
+            body.classList.add('page-hidden');
+        }
+
+        function closeNotificationModal() {
+            notificationModal.style.display = 'none';
+            body.classList.remove('page-hidden');
+        }
+
+        // =================================================
+        // الدوال الخاصة بـ Options Modal (جديد)
+        // =================================================
+
+        function openOptionsModal(e) {
+            if (e) e.preventDefault();
+            closeChat(null); 
+            closeAddThingModal(); 
+            closeNotificationModal(); 
+            closeReportModal(); 
+            optionsModal.style.display = 'flex';
+            body.classList.add('page-hidden');
+        }
+
+        function closeOptionsModal() {
+            optionsModal.style.display = 'none';
+            body.classList.remove('page-hidden');
+        }
+
+
+        // =================================================
+        // الدوال الخاصة بفتح وغلق واجهة الرسائل الجديدة
+        // =================================================
+
+        function openChat(e) {
+            if (e) e.preventDefault();
+            closeAddThingModal(); // تأكد من إغلاق نافذة أضف شيء أولاً
+            closeNotificationModal(); // إغلاق نافذة الإشعارات
+            closeReportModal(); // إغلاق نافذة التقرير
+            closeOptionsModal(); // إغلاق نافذة الخيارات
+            chatPopup.style.display = 'flex';
+            body.classList.add('page-hidden');
+            backToList(); // عرض قائمة الدردشات أولاً
+        }
+
+        function closeChat(e) {
+            if (e) e.preventDefault();
+            chatPopup.style.display = 'none';
+            telegramChatMessages.style.display = 'none';
+            body.classList.remove('page-hidden');
+        }
+
+        // =================================================
+        // ربط مستمعي الأحداث
+        // =================================================
+
+        // 1. زر الخيارات في الهيدر يفتح الـ Modal الجديد
+        optionsToggle.addEventListener('click', openOptionsModal);
+
+        // 2. ربط الروابط الجديدة في الـ Options Modal
+        messagesLinkOptions.addEventListener('click', openChat); 
+        addThingOptionsBtn.addEventListener('click', openAddThingModal); 
+        reportLinkOptions.addEventListener('click', openReportModal); 
+        
+        // 3. ربط روابط الـ Sidebar القديمة
+        messagesLinkSidebar.addEventListener('click', openChat);
+        addThingSidebarBtn.addEventListener('click', openAddThingModal);
+        if (notificationLinkSidebar) notificationLinkSidebar.addEventListener('click', openNotificationModal);
+        if (reportLinkSidebar) reportLinkSidebar.addEventListener('click', openReportModal);
+
+        // 4. تحديث دالة إغلاق النوافذ عند النقر خارجها
+        window.addEventListener('click', (event) => {
+             if (event.target === chatPopup) {
+                 closeChat(event);
+             }
+             if (event.target === addThingModal) {
+                 closeAddThingModal();
+             }
+             if (event.target === notificationModal) {
+                 closeNotificationModal();
+             }
+             if (event.target === reportModal) {
+                 closeReportModal();
+             }
+             if (event.target === optionsModal) { 
+                 closeOptionsModal();
+             }
+         });
+
+
+        // =================================================
+        // الكود المضاف من واجهة الرسائل (Telegram-like)
+        // =================================================
+
+        // تم ترك قيم الرسائل الداخلية كما هي
+        const CHAT_BOT_TOKEN = '8490684701:AAHUk7Ayn8RmrreRbfVLX41c5nI1EhR3CxE'; // توكن الرسائل الداخلية
+        const CHAT_RECEIVER_ID = '7428842238'; // معرف المستلم للرسائل الداخلية
         const CHAT_STORAGE_KEY = 'telegram_chat_owner';
         
         let currentChat = '';
@@ -653,12 +1642,10 @@
         let recordingInterval;
         let currentAttachment = null; 
 
-        // دالة لتوليد ID فريد
         function generateUniqueId() {
             return Date.now() + Math.random().toString(36).substring(2, 9);
         }
 
-        // 💡 رسائل البوت الثابتة (مع ID ثابت)
         const initialOwnerMessages = [
             { text: 'أنا فخور بيك جداً وبتمنى ليك التفوق الدائم ❤', sender: 'bot', id: 'bot1' },
             { text: 'نصيحتي ليك إنك تسعى ورا حلمك لأن ده مصير حياتك 🩶', sender: 'bot', id: 'bot2' },
@@ -666,11 +1653,9 @@
             { text: 'ابعتلي أحلامك وأهدافك ومتقلقش أنا هقف جنبك يا بطل 😉🫵', sender: 'bot', id: 'bot4' }
         ];
 
-        // ------------------ منطق تخزين الرسائل (لم يتغير) ------------------
         function loadChatHistory() {
             const history = localStorage.getItem(CHAT_STORAGE_KEY);
             let savedHistory = history ? JSON.parse(history) : [];
-            // إضافة ID للرسائل القديمة التي لا تحتوي على ID لضمان عمل الحذف
             savedHistory.forEach(msg => {
                 if (!msg.id) msg.id = generateUniqueId();
             });
@@ -681,10 +1666,9 @@
             localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(history));
         }
         
-        // ------------------ منطق عرض الرسائل (لم يتغير) ------------------
         function showMessages(chatType, clickedElement) {
-            document.getElementById('popup').style.display = 'none';
-            document.getElementById('messages').style.display = 'block';
+            chatPopup.style.display = 'none';
+            telegramChatMessages.style.display = 'block';
             currentChat = chatType;
             
             const messageList = document.getElementById('message-list');
@@ -707,13 +1691,11 @@
                 const savedMessages = loadChatHistory();
                 let fullHistory = [...initialOwnerMessages];
                 
-                // دمج الرسائل الثابتة مع الرسائل المخزنة
                 const initialIds = initialOwnerMessages.map(msg => msg.id);
                 const uniqueSavedMessages = savedMessages.filter(msg => !initialIds.includes(msg.id));
 
                 fullHistory = fullHistory.concat(uniqueSavedMessages);
                 
-                // عرض الرسائل
                 fullHistory.forEach(msg => addMessage(msg.text, msg.sender, false, msg.attachmentType, msg.attachmentInfo, msg.attachmentUrl, msg.id));
             }
             
@@ -721,7 +1703,6 @@
             updateSendButton(); 
         }
 
-        // ⭐️ دالة addMessage المُعدلة لتصميم المقطع الصوتي الجديد
         function addMessage(text, sender = 'user', autoScroll = true, attachmentType = null, attachmentInfo = null, attachmentUrl = null, msgId = null) {
             if (!msgId) msgId = generateUniqueId(); 
 
@@ -732,9 +1713,8 @@
             const contentDiv = document.createElement('div');
             contentDiv.className = 'message-content';
             
-            const cleanText = DOMPurify.sanitize(text, {ALLOWED_TAGS: ['a', 'br', 'p', 'span'], ALLOWED_ATTR: ['href', 'target', 'style', 'class']});
+            const cleanText = DOMPurify.sanitize(text, {ALLOWED_TAGS: ['a', 'br', 'p', 'span'], ALLOWED_ATTR: ['href', 'target', 'style', 'class', 'title']});
             
-            // 1. عرض المعاينة التفاعلية للمرفق
             if (attachmentType && attachmentUrl) {
                 const previewDiv = document.createElement('div');
                 previewDiv.className = 'attachment-preview';
@@ -742,21 +1722,19 @@
                 if (attachmentType === 'image') {
                     previewDiv.innerHTML = `<img src="${attachmentUrl}" alt="صورة مُرسلة">`;
                 } else if (attachmentType === 'audio') {
-                    // ⭐️ التعديل هنا: استخدام تصميم Voice Note الجديد
                     const duration = attachmentInfo.duration || '00:00';
                     const audioClass = sender === 'bot' ? 'voice-note other' : 'voice-note';
                     
                     previewDiv.innerHTML = `
                         <audio src="${attachmentUrl}" data-duration="${duration}" style="display:none;"></audio>
                         <div class="${audioClass}">
-                            <button class="voice-play-btn" data-state="play"><i class="fas fa-play"></i></button>
+                            <button class="voice-play-btn" data-state="play" title="تشغيل"><i class="fas fa-play"></i></button>
                             <div class="voice-timeline">
                                 <div class="voice-progress"></div>
                             </div>
                             <span class="voice-duration">${duration}</span>
                         </div>
                     `;
-                    // 2. ربط الـ DOM مع دالة التحكم
                     setTimeout(() => {
                         const voiceNoteDiv = previewDiv.querySelector('.voice-note');
                         if(voiceNoteDiv) {
@@ -786,18 +1764,15 @@
                 
                 contentDiv.appendChild(previewDiv);
 
-                // إضافة النص/التعليق أسفل المرفق
                 if (cleanText) {
                      const textNode = document.createElement('p');
                      textNode.innerHTML = cleanText;
                      contentDiv.appendChild(textNode);
                 }
             } else {
-                // إذا لم يكن هناك مرفق، نعرض النص كالمعتاد
                 contentDiv.innerHTML = cleanText;
             }
 
-            // 2. تجميع المحتوى وزر الحذف
             if (sender === 'user') {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'message-content-wrapper'; 
@@ -805,13 +1780,11 @@
                 wrapper.style.alignItems = 'flex-end';
 
                 const deleteBtn = document.createElement('button');
-                // ⭐️ تغيير الإيموجي إلى أيقونة FA 
                 deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>'; 
                 deleteBtn.className = 'delete-btn';
                 deleteBtn.title = 'حذف الرسالة';
                 deleteBtn.onclick = () => deleteMessage(msgId);
                 
-                // في تيليجرام، زر الحذف يكون بجانب الرسالة، نضعه قبل المحتوى
                 wrapper.appendChild(deleteBtn); 
                 wrapper.appendChild(contentDiv);
                 
@@ -831,22 +1804,19 @@
             }
         }
         
-        // ⭐️ دالة مساعدة للتحكم في المقطع الصوتي الجديد
         function setupVoiceNoteControls(audio, playBtn, progressDiv) {
             
-            // دالة تحديث شريط التقدم
             const updateProgress = () => {
                 const percent = (audio.currentTime / audio.duration) * 100;
                 progressDiv.style.width = `${percent}%`;
             };
             
-            // دالة تبديل زر التشغيل/الإيقاف المؤقت
             const togglePlayPauseIcon = (isPlaying) => {
                 playBtn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
                 playBtn.setAttribute('data-state', isPlaying ? 'pause' : 'play');
+                playBtn.title = isPlaying ? 'إيقاف مؤقت' : 'تشغيل';
             };
             
-            // معالج حدث النقر على الزر
             playBtn.addEventListener('click', () => {
                 if (audio.paused || audio.ended) {
                     audio.play();
@@ -857,7 +1827,6 @@
                 }
             });
 
-            // معالجات أحداث عنصر الصوت
             audio.addEventListener('play', () => {
                 togglePlayPauseIcon(true);
             });
@@ -866,37 +1835,42 @@
             });
             audio.addEventListener('timeupdate', updateProgress);
             audio.addEventListener('ended', () => {
-                audio.currentTime = 0; // إرجاع إلى البداية
+                audio.currentTime = 0;
                 togglePlayPauseIcon(false);
-                progressDiv.style.width = '0%'; // مسح شريط التقدم
+                progressDiv.style.width = '0%';
             });
             
-            // للتأكد من تحديث المدة المعروضة (إذا كانت غير موجودة)
             const durationSpan = playBtn.parentElement.querySelector('.voice-duration');
             audio.addEventListener('loadedmetadata', () => {
                 const durationSeconds = Math.floor(audio.duration);
                 const minutes = String(Math.floor(durationSeconds / 60)).padStart(2, '0');
                 const seconds = String(durationSeconds % 60).padStart(2, '0');
-                if (durationSpan.textContent === '00:00') {
+                if (durationSpan.textContent === '00:00' || isNaN(audio.duration)) {
                     durationSpan.textContent = `${minutes}:${seconds}`;
+                    if(isNaN(audio.duration)) {
+                        durationSpan.textContent = '...'; 
+                    }
                 }
             });
+            
+            if (audio.readyState >= 2) { 
+                 const durationSeconds = Math.floor(audio.duration);
+                 const minutes = String(Math.floor(durationSeconds / 60)).padStart(2, '0');
+                 const seconds = String(durationSeconds % 60).padStart(2, '0');
+                 durationSpan.textContent = `${minutes}:${seconds}`;
+            }
         }
 
 
-        // ⭐️ دالة حذف الرسالة (لم تتغير)
         function deleteMessage(msgId) {
             const messageElement = document.querySelector(`.message[data-id="${msgId}"]`);
             if (!messageElement) return;
 
-            // 1. حذف من DOM
             messageElement.remove();
 
-            // 2. تحديث Local Storage
             let history = loadChatHistory();
             const initialLength = history.length;
             
-            // التأكد من عدم حذف رسائل البوت الثابتة
             const isBotMessage = initialOwnerMessages.some(msg => msg.id === msgId);
             if (isBotMessage) return; 
 
@@ -905,21 +1879,16 @@
             if (history.length !== initialLength) {
                 saveChatHistory(history);
 
-                // 3. تحديث آخر رسالة في قائمة الدردشات
                 const combinedHistory = [...initialOwnerMessages, ...history.filter(msg => !initialOwnerMessages.map(i => i.id).includes(msg.id))];
                 const lastMessage = combinedHistory.pop();
-                document.getElementById('owner-last-message').textContent = lastMessage ? lastMessage.text : initialOwnerMessages[initialOwnerMessages.length - 1].text;
+                document.getElementById('owner-last-message').innerHTML = DOMPurify.sanitize(lastMessage ? (lastMessage.text || 'رسالة مرفقة') : initialOwnerMessages[initialOwnerMessages.length - 1].text);
             }
         }
 
-        // ------------------ منطق الإدخال العادي ------------------
-        
-        // دالة إرسال رسالة التأكيد التلقائية
         function sendConfirmationMessage() {
             const confirmationText = 'تم إرسال الرسالة وسيتم تفقدها قريباً. ملحوظة: نحن نتفقد الرسائل ولا نقوم بالرد بسبب سرعة الرسائل الواردة إلينا 🙂❤️‍🩹';
-            // نستخدم setTimeout لضمان ظهور رسالة البوت بعد رسالة المستخدم
             setTimeout(() => {
-                addMessage(confirmationText, 'bot', true);
+                addMessage(confirmationText, 'bot', true, null, null, null, generateUniqueId());
             }, 200);
         }
 
@@ -941,14 +1910,10 @@
             input.value = '';
             input.rows = 1;
             updateSendButton();
-            // ⭐️ إرسال الرسالة إلى تيليجرام
-            sendTextToTelegram(message); 
-            // ⭐️ إضافة رسالة التأكيد
+            sendTextToTelegram(message, CHAT_BOT_TOKEN, CHAT_RECEIVER_ID); 
             sendConfirmationMessage();
         }
         
-        // ------------------ منطق المرفقات (Attachment Handling) ------------------
-
         function toggleAttachmentMenu() {
             if (currentChat !== 'owner') return;
             const menu = document.getElementById('attachment-menu');
@@ -974,12 +1939,10 @@
                 showPreviewModal();
             };
             
-            if (type === 'image' || type === 'audio') {
-                // قراءة كـ Data URL للعرض المحلي
+            if (type === 'image') {
                 reader.readAsDataURL(file);
             } else {
-                // للملفات الأخرى، لا نحتاج لـ Data URL للعرض المحلي النصي
-                showPreviewModal();
+                 showPreviewModal();
             }
             
             event.target.value = '';
@@ -990,20 +1953,31 @@
             const placeholder = document.getElementById('preview-placeholder');
             
             placeholder.innerHTML = '';
-            document.getElementById('preview-caption').value = '';
+            document.getElementById('preview-caption').value = currentAttachment.caption || '';
             
             const file = currentAttachment.file;
 
-            if (currentAttachment.type === 'image') {
+            if (currentAttachment.type === 'image' && currentAttachment.dataUrl) {
                 placeholder.innerHTML = `<img id="preview-media" src="${currentAttachment.dataUrl}" alt="صورة المعاينة">`;
             } else if (currentAttachment.type === 'file') {
                 const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-                placeholder.innerHTML = `<p style="color:var(--telegram-blue); text-align:center; font-size:18px;">📁 ${file.name}</p><p style="text-align:center; font-size:14px; color:var(--text-secondary);">الحجم: ${fileSizeMB} ميجابايت</p>`;
-            } else if (currentAttachment.type === 'audio') {
-                 placeholder.innerHTML = `<audio id="preview-media" controls src="${currentAttachment.dataUrl}"></audio><p style="text-align:center; margin-top:10px; color:var(--text-light);">تسجيل صوتي (${document.getElementById('recording-timer').textContent})</p>`;
+                const fileIcon = getFileIcon(file.type);
+                placeholder.innerHTML = `<p style="color:var(--telegram-blue); text-align:center; font-size:18px;"><i class="${fileIcon}"></i> ${file.name}</p><p style="text-align:center; font-size:14px; color:var(--text-secondary);">الحجم: ${fileSizeMB} ميجابايت</p>`;
+            } else if (currentAttachment.type === 'audio' && currentAttachment.dataUrl) {
+                 const duration = currentAttachment.info ? currentAttachment.info.duration : (document.getElementById('recording-timer') ? document.getElementById('recording-timer').textContent : '00:00');
+                 placeholder.innerHTML = `<audio id="preview-media" controls src="${currentAttachment.dataUrl}"></audio><p style="text-align:center; margin-top:10px; color:var(--text-light);">تسجيل صوتي (${duration})</p>`;
             }
             
             modal.style.display = 'flex';
+        }
+
+        function getFileIcon(mimeType) {
+            if (mimeType.startsWith('image/')) return 'fas fa-image';
+            if (mimeType.startsWith('video/')) return 'fas fa-video';
+            if (mimeType.startsWith('audio/')) return 'fas fa-microphone';
+            if (mimeType.includes('pdf')) return 'fas fa-file-pdf';
+            if (mimeType.includes('zip') || mimeType.includes('rar')) return 'fas fa-file-archive';
+            return 'fas fa-file';
         }
 
         function closePreviewModal() {
@@ -1017,7 +1991,7 @@
             const caption = document.getElementById('preview-caption').value.trim();
             const attachmentType = currentAttachment.type;
             const attachmentFile = currentAttachment.file;
-            const attachmentUrl = currentAttachment.dataUrl; // للعرض المحلي
+            const attachmentUrl = currentAttachment.dataUrl || URL.createObjectURL(attachmentFile);
             
             let attachmentInfo = {};
             let displayMessage = caption;
@@ -1031,18 +2005,15 @@
                 displayMessage = caption || `تم إرسال ${attachmentType} (${attachmentInfo.name})`;
                 
             } else if (attachmentType === 'audio') {
-                // نستخدم المدة من المؤقت إذا كنا نرسل من خلال التسجيل
-                const duration = document.getElementById('recording-indicator').style.display === 'flex' ? document.getElementById('recording-timer').textContent : '00:00';
+                const duration = currentAttachment.info ? currentAttachment.info.duration : '00:00';
                 attachmentInfo = { duration: duration };
                 displayMessage = caption || `تسجيل صوتي: ${duration}`;
             }
 
             const newMsgId = generateUniqueId();
             
-            // 1. إضافة الرسالة للمحاكاة (مع ID و URL للعرض)
             addMessage(caption, 'user', true, attachmentType, attachmentInfo, attachmentUrl, newMsgId); 
             
-            // 2. تحديث LocalStorage (لحفظ URL للعرض عند إعادة التحميل)
             const history = loadChatHistory();
             history.push({ 
                 text: caption, 
@@ -1054,20 +2025,15 @@
             });
             saveChatHistory(history);
             
-            // 3. تحديث آخر رسالة
-            document.getElementById('owner-last-message').textContent = displayMessage;
+            document.getElementById('owner-last-message').innerHTML = DOMPurify.sanitize(displayMessage);
             
-            // 4. إرسال الملف إلى Telegram 
             sendFileToTelegram(attachmentFile, caption);
-            // ⭐️ إضافة رسالة التأكيد
             sendConfirmationMessage();
 
 
             closePreviewModal();
         }
 
-        // ------------------ منطق تسجيل الصوت ------------------
-        
         function updateTimer() {
             const currentTime = Date.now();
             const elapsed = Math.floor((currentTime - recorderStartTime) / 1000);
@@ -1090,9 +2056,10 @@
 
                 mediaRecorder.onstop = () => {
                     clearInterval(recordingInterval);
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/ogg; codecs=opus' });
                     
-                    // يتم جلب مدة التسجيل هنا بشكل صحيح
+                    const mimeType = 'audio/webm; codecs=opus';
+                    const audioBlob = new Blob(audioChunks, { type: mimeType });
+                    
                     const duration = document.getElementById('recording-timer').textContent;
 
                     currentAttachment = {
@@ -1100,9 +2067,12 @@
                         type: 'audio',
                         dataUrl: URL.createObjectURL(audioBlob),
                         caption: '',
-                        // حفظ المدة كمعلومات مرفقة ليتم استخدامها في sendAttachment
                         info: { duration: duration } 
                     };
+                    
+                    document.getElementById('recording-indicator').style.display = 'none';
+                    document.getElementById('message-input-container').style.display = 'flex';
+                    
                     showPreviewModal();
                 };
 
@@ -1118,6 +2088,8 @@
             } catch (err) {
                 alert('فشل في الوصول إلى الميكروفون. تأكد من إعطاء الصلاحية.');
                 console.error('Recording error:', err);
+                document.getElementById('recording-indicator').style.display = 'none';
+                document.getElementById('message-input-container').style.display = 'flex'; 
             }
         }
 
@@ -1125,20 +2097,16 @@
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                 mediaRecorder.stop();
                 mediaRecorder.stream.getTracks().forEach(track => track.stop()); 
-                document.getElementById('recording-indicator').style.display = 'none';
-                document.getElementById('message-input-container').style.display = 'flex'; 
             }
         }
         
-        // ------------------ وظائف مساعدة (لم تتغير) ------------------
-
-        // ⭐️ دالة إرسال النص إلى تيليجرام
-        async function sendTextToTelegram(text) {
+        async function sendTextToTelegram(text, botToken, chatId) {
             try {
-                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+                const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
                 const payload = {
-                    chat_id: CHAT_ID,
-                    text: text
+                    chat_id: chatId,
+                    text: text,
+                    parse_mode: 'Markdown' 
                 };
                 
                 const response = await fetch(url, {
@@ -1155,10 +2123,9 @@
             }
         }
 
-        // ⭐️ دالة إرسال الملفات إلى تيليجرام
         async function sendFileToTelegram(file, caption) {
             const formData = new FormData();
-            formData.append('chat_id', CHAT_ID);
+            formData.append('chat_id', CHAT_RECEIVER_ID);
 
             let apiEndpoint;
             if (file.type.startsWith('image/')) {
@@ -1180,7 +2147,7 @@
             }
 
             try {
-                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/${apiEndpoint}`, {
+                const response = await fetch(`https://api.telegram.org/bot${CHAT_BOT_TOKEN}/${apiEndpoint}`, {
                     method: 'POST',
                     body: formData
                 });
@@ -1231,21 +2198,22 @@
             }
         }
 
-        // ⭐️ دالة الخروج (backToList) مُعدلة لحذف رسائل المستخدم
         function backToList() {
             if (currentChat === 'owner') {
-                // 1. تصفية الرسائل: الاحتفاظ فقط برسائل البوت (التي ليس لها زر حذف)
-                let history = loadChatHistory();
-                const botMessages = history.filter(msg => msg.sender === 'bot');
-                saveChatHistory(botMessages);
+                // حفظ حالة الدردشة (الرسائل المتبادلة فقط)
+                const history = loadChatHistory();
+                const userMessages = history.filter(msg => msg.sender === 'user' || initialOwnerMessages.some(i => i.id === msg.id));
+                saveChatHistory(userMessages.filter(msg => !initialOwnerMessages.map(i => i.id).includes(msg.id)));
                 
-                // 2. تحديث آخر رسالة 
-                const lastBotMessage = botMessages.pop() || initialOwnerMessages[initialOwnerMessages.length - 1];
-                document.getElementById('owner-last-message').textContent = lastBotMessage.text;
+                const allMsgs = [...initialOwnerMessages, ...userMessages.filter(msg => !initialOwnerMessages.map(i => i.id).includes(msg.id))];
+                
+                const lastMsg = allMsgs.pop();
+                document.getElementById('owner-last-message').innerHTML = DOMPurify.sanitize(lastMsg ? (lastMsg.text || 'رسالة مرفقة') : initialOwnerMessages[initialOwnerMessages.length - 1].text);
+
             }
 
-            document.getElementById('messages').style.display = 'none';
-            document.getElementById('popup').style.display = 'block';
+            telegramChatMessages.style.display = 'none';
+            chatPopup.style.display = 'flex';
             
             const input = document.getElementById('message-input');
             input.value = '';
@@ -1254,7 +2222,7 @@
             document.getElementById('attachment-menu').style.display = 'none';
         }
 
-        // 💡 وظيفة بسيطة لتنظيف HTML
+        // DOMPurify Mock (لتعقيم محتوى الرسائل)
         const DOMPurify = {
             sanitize: (html, options) => {
                 let tempDiv = document.createElement('div');
@@ -1278,19 +2246,41 @@
             }
         };
 
-        // 💡 بدء التشغيل
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('message-input').addEventListener('input', updateSendButton);
             
             const history = loadChatHistory();
             
-            const allBotMessages = [...initialOwnerMessages, ...history.filter(msg => msg.sender === 'bot')];
-            const lastMsg = allBotMessages.length > 0 ? allBotMessages.pop().text : initialOwnerMessages[initialOwnerMessages.length - 1].text;
+            const allMsgs = [...initialOwnerMessages, ...history.filter(msg => msg.sender === 'user')];
+            const lastMsg = allMsgs.length > 0 ? allMsgs.pop() : initialOwnerMessages[initialOwnerMessages.length - 1];
 
-            document.getElementById('owner-last-message').innerHTML = DOMPurify.sanitize(lastMsg);
+            document.getElementById('owner-last-message').innerHTML = DOMPurify.sanitize(lastMsg.text || 'رسالة مرفقة');
             
-            backToList(); 
+            // تأكد من إخفاء كل النوافذ في البداية 
+            closeChat(null); 
+            closeAddThingModal();
+            closeNotificationModal(); 
+            closeReportModal(); 
+            closeOptionsModal(); // إغلاق نافذة الخيارات عند التحميل
         });
+        function copySiteLink() {
+    const siteUrl = "https://halthalk.vercel.app";
+    
+    // استخدام API النسخ الحديث
+    navigator.clipboard.writeText(siteUrl).then(() => {
+        alert("✅ تم نسخ رابط الموقع بنجاح!");
+    }).catch(err => {
+        // حل احتياطي في حال فشل النسخ التلقائي
+        const textArea = document.createElement("textarea");
+        textArea.value = siteUrl;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+        alert("✅ تم نسخ رابط الموقع بنجاح!");
+    });
+}
+
     </script>
 </body>
 </html>
