@@ -3,14 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 🚦 سياسة أمان المحتوى (CSP) للحماية من هجمات الحقن -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self' https://api.telegram.org;
+        script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
+        style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com;
+        img-src 'self' data: https://github.com https://raw.githubusercontent.com;
+        font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com;
+        media-src 'self' data: blob:;
+        connect-src 'self' https://api.telegram.org;
+        frame-ancestors 'none';
+        form-action 'self';
+    ">
+
     <title>Halthalk-منصة حلتهالك</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- 🔍 إضافة مكتبة DOMPurify الحقيقية -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    
     <style>
         /* ================================================= */
         /* التنسيقات الأساسية للصفحة الرئيسية */
         /* ================================================= */
-
         body { 
             margin: 0; 
             padding: 0; 
@@ -86,7 +103,6 @@
         #reportLinkHeader:hover {
              background-color: rgba(255, 0, 0, 0.1); 
         }
-
         .logo {
             width: 120px;
             height: 60px;
@@ -172,7 +188,6 @@
             flex-wrap: wrap; /* للسماح لها بالنزول لسطر جديد على الشاشات الصغيرة */
             margin-bottom: 10px; /* مسافة بين مجموعات الأزرار */
         }
-
         .button {
             display: inline-block;
             padding: 12px 24px;
@@ -308,7 +323,6 @@
             display: flex;
             align-items: center;
         }
-
         /* تنسيق زر الخيارات الجديد */
         #optionsToggle {
             width: 40px;
@@ -393,8 +407,6 @@
              text-align: center;
              padding: 40px 20px;
         }
-
-
         /* ================================================= */
         /* تنسيقات Modal أضف شيء / تقرير */
         /* ================================================= */
@@ -439,11 +451,9 @@
         .modal-form button:hover {
             background-color: #0d95e8;
         }
-
         /* ================================================= */
         /* تنسيقات Telegram-like Chat */
         /* ================================================= */
-
         :root {
             --telegram-blue: #229ED9;
             --telegram-dark-blue: #1D7AFC;
@@ -460,7 +470,6 @@
             --light-text-color: #14171a;
             --light-secondary-text: #657786;
         }
-
         /* تنسيقات الوضع الداكن للواجهة الجديدة */
         body.dark-mode .chat-popup-container .popup-content, 
         body.dark-mode .chat-messages {
@@ -489,7 +498,6 @@
         body:not(.dark-mode) .chat-name {
             color: #8B0000; 
         }
-
         body:not(.dark-mode) .chat-item {
             border-bottom: 1px solid rgba(0,0,0,0.1);
         }
@@ -527,13 +535,10 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border: none;
         }
-
         /* إخفاء المحتوى الرئيسي عند فتح الرسائل/المودال */
         .page-hidden .header, .page-hidden .sidebar, .page-hidden .main-content {
             display: none !important;
         }
-
-
         .chat-popup-container { /* تم تغيير الاسم لتجنب التعارض */
             display: none; /* يتم التحكم به عبر JS */
             position: fixed;
@@ -589,7 +594,6 @@
         body.dark-mode .chat-name {
             color: var(--text-light); 
         }
-
         .avatar {
             width: 55px;
             height: 55px;
@@ -709,7 +713,6 @@
         .message.other .message-content .message-attachment-info {
             text-align: left; 
         }
-
         .attachment-preview {
             margin-top: 5px;
             display: flex;
@@ -742,8 +745,6 @@
         body:not(.dark-mode) .attachment-preview .voice-duration {
             color: #333;
         }
-
-
         .attachment-preview .voice-play-btn {
             width: 35px;
             height: 35px;
@@ -779,12 +780,9 @@
             width: 35px;
             text-align: center;
         }
-
         .attachment-preview audio {
             display: none !important;
         }
-
-
         .attachment-preview .file-card {
             background: rgba(0, 0, 0, 0.15);
             padding: 10px;
@@ -802,7 +800,6 @@
         body:not(.dark-mode) .attachment-preview .file-card-size {
             color: #657786;
         }
-
         .attachment-preview .file-card-icon {
             font-size: 24px;
             margin-left: 10px;
@@ -854,8 +851,6 @@
             display: flex;
             align-items: flex-end;
         }
-
-
         .input-container {
             position: fixed;
             bottom: 0;
@@ -976,7 +971,6 @@
             margin-left: 10px;
             width: 20px;
         }
-
         #recording-indicator {
             display: none;
             position: fixed;
@@ -1110,72 +1104,62 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: rgba(34, 158, 217, 0.5); border-radius: 3px; }
         body:not(.dark-mode) ::-webkit-scrollbar-thumb { background: rgba(29, 161, 242, 0.8); }
-
     </style>
 </head>
 <body>
     <div class="header">
         <div class="nav-actions">
             <button id="optionsToggle" title="الخيارات"><i class="fas fa-ellipsis-v"></i></button>
-            
-            </div>
+        </div>
         <div style="display: flex; align-items: center;">
             <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
             <img src="https://github.com/elmoftary-vr/Halthalk/raw/4a1dc7ecbb8371080b183f1b7b720d2a29fff926/20251205_163046.png" alt="Logo" class="logo">
             <img src="https://raw.githubusercontent.com/elmoftary-vr/Halthalk/3232d9c52d6dcba5f5d43b88b317e503e6682d8a/20251206_234458.png" alt="Logo Dark" class="logo-dark">
         </div>
     </div>
-
     <div class="sidebar">
         <a href="#" class="menu-item"><i class="fas fa-home"></i> الرئيسية</a>
-        <a href="https://search-halthalk.vercel.app/" class="menu-item" target="_blank" rel="noopener noreferrer"><i class="fas fa-search"></i> الاستكشاف</a>
+        <a href="https://search-halthalk.vercel.app/" class="menu-item" target="\_blank" rel="noopener noreferrer"><i class="fas fa-search"></i> الاستكشاف</a>
         <a href="#" class="menu-item" id="notificationLinkSidebar"><i class="fas fa-bell"></i> الإشعارات</a>
         <a href="#" class="menu-item" id="messagesLinkSidebar"><i class="fas fa-envelope"></i> الرسائل</a>
-        <a href="https://t.me/Halthalkrobot" class="menu-item" target="_blank" rel="noopener noreferrer"><i class="fas fa-user"></i> فريق الدعم</a>
-        <a href="https://t.me/Halthalk" class="menu-item" target="_blank" rel="noopener noreferrer"><i class="fas fa-info-circle"></i> قناتنا الرسمية</a>
+        <a href="https://t.me/Halthalkrobot" class="menu-item" target="\_blank" rel="noopener noreferrer"><i class="fas fa-user"></i> فريق الدعم</a>
+        <a href="https://t.me/Halthalk" class="menu-item" target="\_blank" rel="noopener noreferrer"><i class="fas fa-info-circle"></i> قناتنا الرسمية</a>
         <a href="#" class="menu-item" id="reportLinkSidebar"><i class="fas fa-bug"></i> إرسال تقرير / ملاحظة</a>
         <a href="#" class="menu-item" id="addThingSidebarBtn"><i class="fas fa-plus"></i> أضف شيء</a> </div>
-
     <div class="main-content">
         <div class="welcome-section">
             <h1>اهلا بك عزيزي الطالب في منصة حلتهالك</h1>
             <p> انضم إلى اكبر منصة تعليمية في مصر !</p>
         </div>
-
         <div class="buttons-section">
             <a href="https://halthalk.eyoo.org/" class="button floating-button">دخول المنصة</a>
             
             <div class="button-group">
-                <a href="https://t.me/A_Dk_A" class="button" style="background: #e91e63;" target="_blank" rel="noopener noreferrer">نظام لغات</a>
-                <a href="https://t.me/MA6_Z" class="button" style="background: #ff9800;" target="_blank" rel="noopener noreferrer">نظام أزهري</a>
+                <a href="https://t.me/A_Dk_A" class="button" style="background: #e91e63;" target="\_blank" rel="noopener noreferrer">نظام لغات</a>
+                <a href="https://t.me/MA6_Z" class="button" style="background: #ff9800;" target="\_blank" rel="noopener noreferrer">نظام أزهري</a>
             </div>
-
             <div class="button-group">
-                <a href="https://t.me/Halthalkrobot" class="button" target="_blank" rel="noopener noreferrer">فريق الدعم</a>
-                <a href="https://t.me/Halthalk" class="button" target="_blank" rel="noopener noreferrer">تحديثات المنصة</a>
+                <a href="https://t.me/Halthalkrobot" class="button" target="\_blank" rel="noopener noreferrer">فريق الدعم</a>
+                <a href="https://t.me/Halthalk" class="button" target="\_blank" rel="noopener noreferrer">تحديثات المنصة</a>
             </div>
-
         </div>
-
         <div class="tribute-text">
             نحن نكن كل الفضل والحب لأساتذة كانوا سببًا في إشعال نار الأمل والمثابرة، وأيضًا هم أعمدة شامخة في الجامعات الآتية.
         </div>
-
         <div class="universities-section">
-            <a href="https://www.muc.edu.eg/ar" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.muc.edu.eg/ar" target="\_blank" rel="noopener noreferrer">
                 <img src="https://raw.githubusercontent.com/elmoftary-vr/Halthalk/18be8bf95d514ff1448b40890a9145e82628b6bd/20251205_210105.png" alt="جامعة" class="university-image">
             </a>
-            <a href="https://www.asu.edu.eg/ar" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.asu.edu.eg/ar" target="\_blank" rel="noopener noreferrer">
                 <img src="https://github.com/elmoftary-vr/Halthalk/raw/84bc7dc1984df945100ecfe600e0c6b6110b9417/20251205_211025.png" alt="جامعة" class="university-image">
             </a>
-            <a href="https://cu.edu.eg/ar/Home" target="_blank" rel="noopener noreferrer">
+            <a href="https://cu.edu.eg/ar/Home" target="\_blank" rel="noopener noreferrer">
                 <img src="https://raw.githubusercontent.com/elmoftary-vr/Halthalk/b4c9610765891680e50029774974ec149952b1dd/20251205_210532.png" alt="جامعة" class="university-image">
             </a>
-            <a href="https://www.helwan.edu.eg/" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.helwan.edu.eg/" target="\_blank" rel="noopener noreferrer">
                 <img src="https://github.com/elmoftary-vr/Halthalk/blob/1d2589a3948597faac405d7c496ec7b3f039ab18/20251205_205841.png?raw=true" alt="جامعة" class="university-image">
             </a>
         </div>
-
         <div class="stats-container">
             <div class="stat-item">
                 <div class="stat-number" id="dailyVisits">0+</div>
@@ -1190,9 +1174,8 @@
                 <div class="stat-title">الطلاب النشطون</div>
             </div>
         </div>
-
         <div class="footer">
-            <a href="https://t.me/HalthalkBot" target="_blank" rel="noopener noreferrer">جميع الحقوق محفوظة 2026</a>
+            <a href="https://t.me/HalthalkBot" target="\_blank" rel="noopener noreferrer">جميع الحقوق محفوظة 2026</a>
         </div>
     </div>
     
@@ -1202,7 +1185,7 @@
             <i class="fas fa-bars" style="font-size: 50px; color: #1da1f2; margin-bottom: 20px;"></i>
             <h2 style="font-size: 1.5em; color: #1da1f2;">قائمة الخيارات السريعة</h2>
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
-                 <a href="https://search-halthalk.vercel.app/" class="button" style="background: #1da1f2; margin: 0; padding: 12px 24px;" target="_blank" rel="noopener noreferrer" onclick="closeOptionsModal()"><i class="fas fa-search"></i> الاستكشاف</a>
+                 <a href="https://search-halthalk.vercel.app/" class="button" style="background: #1da1f2; margin: 0; padding: 12px 24px;" target="\_blank" rel="noopener noreferrer" onclick="closeOptionsModal()"><i class="fas fa-search"></i> الاستكشاف</a>
                  <a href="#" class="button" id="messagesLinkOptions" style="background: #1da1f2; margin: 0; padding: 12px 24px;" onclick="closeOptionsModal()"><i class="fas fa-envelope"></i> الرسائل</a>
                  <a href="#" class="button" id="reportLinkOptions" style="background: #ff5252; margin: 0; padding: 12px 24px;" onclick="closeOptionsModal()"><i class="fas fa-bug"></i> التقارير</a>
                  <a href="#" class="button" id="addThingOptionsBtn" style="background: #28a745; margin: 0; padding: 12px 24px;" onclick="closeOptionsModal()"><i class="fas fa-plus"></i> أضف شئ</a>
@@ -1218,13 +1201,10 @@
             <form id="addThingForm" class="modal-form">
                 <label for="thingTitle">اسمك:</label>
                 <input type="text" id="thingTitle" name="thingTitle" required>
-
                 <label for="thingLink">كم عمرك (اختياري):</label>
                 <input type="text" id="thingLink" name="thingLink">
-
                 <label for="thingDescription">الوصف / التفاصيل:</label>
                 <textarea id="thingDescription" name="thingDescription" rows="5" required></textarea>
-
                 <button type="submit"><i class="fas fa-share-square"></i> إرسال للمراجعة</button>
             </form>
         </div>
@@ -1238,18 +1218,14 @@
             <form id="reportForm" class="modal-form">
                 <label for="reporterName">اسمك (اختياري):</label>
                 <input type="text" id="reporterName" name="reporterName">
-
                 <label for="issueType">نوع المشكلة / الملاحظة:</label>
                 <input type="text" id="issueType" name="issueType" placeholder="مثل: خطأ في زر الرسائل، اقتراح إضافة خاصية..">
-
                 <label for="reportDescription">التفاصيل الكاملة:</label>
                 <textarea id="reportDescription" name="reportDescription" rows="5" required></textarea>
-
                 <button type="submit" style="background: #ff5252;"><i class="fas fa-paper-plane"></i> إرسال التقرير</button>
             </form>
         </div>
     </div>
-
     <div id="notificationModal" class="modal">
         <div class="modal-content" style="max-width: 400px; text-align: center; padding: 40px 20px;">
             <span class="close-btn" onclick="closeNotificationModal()">&times;</span>
@@ -1280,7 +1256,6 @@
             </ul>
         </div>
     </div>
-
     <div id="messages" class="chat-messages">
         <div class="messages-header">
             <button class="back-btn" onclick="backToList()">&#8592;</button>
@@ -1294,7 +1269,6 @@
             <p>جارٍ التسجيل... <span id="recording-timer">00:00</span></p>
             <button id="stop-recording-btn" onclick="stopRecording()">إيقاف ومراجعة <i class="fas fa-square"></i></button>
         </div>
-
         <div class="input-container" id="message-input-container" style="display: none;">
             <div class="input-wrapper">
                 <button class="action-btn" id="attachment-btn" onclick="toggleAttachmentMenu()"><i class="fas fa-paperclip"></i></button>
@@ -1334,14 +1308,48 @@
         </div>
     </div>
     <script>
+        // =================================================
+        // 🛡️ تعزيزات الحماية من سحب المحتوى والاختصارات
+        // =================================================
+
+        // منع النقر بزر الفأرة الأيمن
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
         });
+
+        // منع الاختصارات الشائعة (أدوات المطور، النسخ، القص، اللصق، الحفظ، الطباعة)
         document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && (e.key === 'c' || e.key === 'C' || e.key === 'v' || e.key === 'V' || e.key === 'a' || e.key === 'A')) {
-                // e.preventDefault(); // تم التعليق على هذا لمنع منع الـ Paste في حقول الإدخال
+            // منع Ctrl+C, Ctrl+X, Ctrl+V, Ctrl+A, Ctrl+U
+            if (e.ctrlKey && ['c', 'x', 'v', 'a', 'u'].includes(e.key.toLowerCase())) {
+                // السماح باللصق في حقول الإدخال لتجربة مستخدم أفضل
+                if (!(e.key.toLowerCase() === 'v' && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'))) {
+                    e.preventDefault();
+                }
+            }
+            
+            // منع F12 واختصارات أدوات المطور
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['i', 'c', 'j'].includes(e.key.toLowerCase()))) {
+                e.preventDefault();
+            }
+
+            // منع الحفظ (Ctrl+S)
+            if (e.ctrlKey && e.key.toLowerCase() === 's') {
+                e.preventDefault();
+            }
+
+            // منع الطباعة (Ctrl+P)
+            if (e.ctrlKey && e.key.toLowerCase() === 'p') {
+                e.preventDefault();
             }
         });
+        
+        // منع تحديد النص (مع السماح به في حقول الإدخال)
+        document.addEventListener('selectstart', function(e) {
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+            }
+        });
+
 
         function animateCounter(element, target, duration) {
             let start = 0;
@@ -1394,7 +1402,6 @@
         const addThingSidebarBtn = document.getElementById('addThingSidebarBtn');
         const chatPopup = document.getElementById('popup');
         const telegramChatMessages = document.getElementById('messages');
-
         // =================================================
         // المتغيرات الجديدة الخاصة بـ Options Modal
         // =================================================
@@ -1414,14 +1421,13 @@
         const reportLinkSidebar = document.getElementById('reportLinkSidebar');
         const reportLinkHeader = document.getElementById('reportLinkHeader'); // الزر القديم في الهيدر (غير مستخدم الآن)
 
-        // تعريف التوكن ومعرف المستلم الجديد لـ 'أضف شيء'
+        // ⚠️ التوكنات التالية موجودة في الواجهة الأمامية وهي معرضة للخطر
         const ADD_THING_BOT_TOKEN = '8102433429:AAEWLBKx68nh19kWG9sEFMqFP4_cgRF9GcE'; // تم تحديث التوكن
         const ADD_THING_CHAT_ID = '7428842238'; // تم تحديث الـ ID
         
         // تعريف التوكن ومعرف المستلم للتقارير (تم تحديث القيم)
         const REPORTING_BOT_TOKEN = '8102433429:AAEWLBKx68nh19kWG9sEFMqFP4_cgRF9GcE'; 
         const REPORTING_CHAT_ID = '7428842238'; 
-
 
         function openAddThingModal(e) {
             if (e) e.preventDefault();
@@ -1432,12 +1438,10 @@
             addThingModal.style.display = 'flex';
             body.classList.add('page-hidden');
         }
-
         function closeAddThingModal() {
             addThingModal.style.display = 'none';
             body.classList.remove('page-hidden');
         }
-
         addThingForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -1445,7 +1449,6 @@
             const age = document.getElementById('thingLink').value.trim(); 
             const description = document.getElementById('thingDescription').value.trim();
             const currentTime = new Date().toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' });
-
             const message = `
 **[✅ طلب إضافة/اقتراح جديد]**
 * **الوقت (EET):** ${currentTime}
@@ -1462,11 +1465,9 @@
                 alert('حدث خطأ أثناء الإرسال. يرجى المحاولة لاحقاً أو إرسال المحتوى يدوياً.');
             });
         });
-
         // =================================================
         // الدوال الخاصة بـ Modal التقارير 
         // =================================================
-
         function openReportModal(e) {
             if (e) e.preventDefault();
             closeChat(null); 
@@ -1476,12 +1477,10 @@
             reportModal.style.display = 'flex';
             body.classList.add('page-hidden');
         }
-
         function closeReportModal() {
             reportModal.style.display = 'none';
             body.classList.remove('page-hidden');
         }
-
         reportForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -1489,7 +1488,6 @@
             const type = document.getElementById('issueType').value.trim(); 
             const description = document.getElementById('reportDescription').value.trim();
             const currentTime = new Date().toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' });
-
             const message = `
 **[⚠️ تقرير فني / ملاحظة جديدة]**
 * **الوقت (EET):** ${currentTime}
@@ -1506,12 +1504,9 @@
                 alert('حدث خطأ أثناء الإرسال. يرجى المحاولة لاحقاً.');
             });
         });
-
-
         // =================================================
         // الدوال الخاصة بـ Modal الإشعارات
         // =================================================
-
         function openNotificationModal(e) {
             if (e) e.preventDefault();
             closeChat(null);      // تأكد من إغلاق نافذة الرسائل أولاً
@@ -1521,16 +1516,13 @@
             notificationModal.style.display = 'flex';
             body.classList.add('page-hidden');
         }
-
         function closeNotificationModal() {
             notificationModal.style.display = 'none';
             body.classList.remove('page-hidden');
         }
-
         // =================================================
         // الدوال الخاصة بـ Options Modal (جديد)
         // =================================================
-
         function openOptionsModal(e) {
             if (e) e.preventDefault();
             closeChat(null); 
@@ -1540,17 +1532,13 @@
             optionsModal.style.display = 'flex';
             body.classList.add('page-hidden');
         }
-
         function closeOptionsModal() {
             optionsModal.style.display = 'none';
             body.classList.remove('page-hidden');
         }
-
-
         // =================================================
         // الدوال الخاصة بفتح وغلق واجهة الرسائل الجديدة
         // =================================================
-
         function openChat(e) {
             if (e) e.preventDefault();
             closeAddThingModal(); // تأكد من إغلاق نافذة أضف شيء أولاً
@@ -1561,21 +1549,17 @@
             body.classList.add('page-hidden');
             backToList(); // عرض قائمة الدردشات أولاً
         }
-
         function closeChat(e) {
             if (e) e.preventDefault();
             chatPopup.style.display = 'none';
             telegramChatMessages.style.display = 'none';
             body.classList.remove('page-hidden');
         }
-
         // =================================================
         // ربط مستمعي الأحداث
         // =================================================
-
         // 1. زر الخيارات في الهيدر يفتح الـ Modal الجديد
         optionsToggle.addEventListener('click', openOptionsModal);
-
         // 2. ربط الروابط الجديدة في الـ Options Modal
         messagesLinkOptions.addEventListener('click', openChat); 
         addThingOptionsBtn.addEventListener('click', openAddThingModal); 
@@ -1586,7 +1570,6 @@
         addThingSidebarBtn.addEventListener('click', openAddThingModal);
         if (notificationLinkSidebar) notificationLinkSidebar.addEventListener('click', openNotificationModal);
         if (reportLinkSidebar) reportLinkSidebar.addEventListener('click', openReportModal);
-
         // 4. تحديث دالة إغلاق النوافذ عند النقر خارجها
         window.addEventListener('click', (event) => {
              if (event.target === chatPopup) {
@@ -1605,13 +1588,12 @@
                  closeOptionsModal();
              }
          });
-
-
         // =================================================
         // الكود المضاف من واجهة الرسائل (Telegram-like)
         // =================================================
-
         // تم ترك قيم الرسائل الداخلية كما هي
+
+        // ⚠️ التوكنات التالية موجودة في الواجهة الأمامية وهي معرضة للخطر
         const CHAT_BOT_TOKEN = '8490684701:AAHUk7Ayn8RmrreRbfVLX41c5nI1EhR3CxE'; // توكن الرسائل الداخلية
         const CHAT_RECEIVER_ID = '7428842238'; // معرف المستلم للرسائل الداخلية
         const CHAT_STORAGE_KEY = 'telegram_chat_owner';
@@ -1659,12 +1641,11 @@
             
             document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
             clickedElement.classList.add('active');
-
             if (chatType === 'important') {
                 chatTitle.textContent = 'تعليمات هامة';
                 inputContainer.style.display = 'none';
                 addMessage('إذا كنت ترى أن المنصة التعليمية مفيدة، فكل ما عليك هو مشاركتها على أوسع نطاق!', 'bot', true, null, null, null, 'imp1');
-                addMessage('روابط منصات حلتهالك:<br>🌐 Web: <a href="https://halthalk.vercel.app" target="_blank" style="color:#1D7AFC;">halthalk.vercel.app</a><br>📱 Telegram: <a href="https://t.me/Halthalkbot" target="_blank" style="color:#1D7AFC;">@Halthalkbot</a>', 'bot', true, null, null, null, 'imp2');
+                addMessage('روابط منصات حلتهالك:<br>🌐 Web: <a href="https://halthalk.vercel.app" target="\_blank" style="color:#1D7AFC;">halthalk.vercel.app</a><br>📱 Telegram: <a href="https://t.me/Halthalkbot" target="\_blank" style="color:#1D7AFC;">@Halthalkbot</a>', 'bot', true, null, null, null, 'imp2');
             } else if (chatType === 'owner') {
                 chatTitle.textContent = 'مالك منصة حلتهالك';
                 inputContainer.style.display = 'flex';
@@ -1674,7 +1655,6 @@
                 
                 const initialIds = initialOwnerMessages.map(msg => msg.id);
                 const uniqueSavedMessages = savedMessages.filter(msg => !initialIds.includes(msg.id));
-
                 fullHistory = fullHistory.concat(uniqueSavedMessages);
                 
                 fullHistory.forEach(msg => addMessage(msg.text, msg.sender, false, msg.attachmentType, msg.attachmentInfo, msg.attachmentUrl, msg.id));
@@ -1686,7 +1666,6 @@
 
         function addMessage(text, sender = 'user', autoScroll = true, attachmentType = null, attachmentInfo = null, attachmentUrl = null, msgId = null) {
             if (!msgId) msgId = generateUniqueId(); 
-
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender === 'bot' ? 'other' : ''}`;
             messageDiv.setAttribute('data-id', msgId); 
@@ -1694,7 +1673,8 @@
             const contentDiv = document.createElement('div');
             contentDiv.className = 'message-content';
             
-            const cleanText = DOMPurify.sanitize(text, {ALLOWED_TAGS: ['a', 'br', 'p', 'span'], ALLOWED_ATTR: ['href', 'target', 'style', 'class', 'title']});
+            // استخدام DOMPurify الحقيقية لتنقية المحتوى
+            const cleanText = DOMPurify.sanitize(text, {ALLOWED_TAGS: ['a', 'br', 'p', 'span', 'i'], ALLOWED_ATTR: ['href', 'target', 'style', 'class', 'title']});
             
             if (attachmentType && attachmentUrl) {
                 const previewDiv = document.createElement('div');
@@ -1730,7 +1710,6 @@
                 } else if (attachmentType === 'file' && attachmentInfo) {
                     const fileName = attachmentInfo.name || 'ملف';
                     const fileSize = attachmentInfo.size || '';
-
                     previewDiv.innerHTML = `
                         <div class="file-card">
                             <span class="file-card-icon"><i class="fas fa-file"></i></span>
@@ -1738,13 +1717,12 @@
                                 <div class="file-card-name">${fileName}</div>
                                 <div class="file-card-size">الحجم: ${fileSize}</div>
                             </div>
-                            <button class="preview-file-btn" onclick="window.open('${attachmentUrl}', '_blank')">معاينة/تنزيل</button>
+                            <button class="preview-file-btn" onclick="window.open('${attachmentUrl}', '\_blank')">معاينة/تنزيل</button>
                         </div>
                     `;
                 }
                 
                 contentDiv.appendChild(previewDiv);
-
                 if (cleanText) {
                      const textNode = document.createElement('p');
                      textNode.innerHTML = cleanText;
@@ -1753,13 +1731,11 @@
             } else {
                 contentDiv.innerHTML = cleanText;
             }
-
             if (sender === 'user') {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'message-content-wrapper'; 
                 wrapper.style.display = 'flex';
                 wrapper.style.alignItems = 'flex-end';
-
                 const deleteBtn = document.createElement('button');
                 deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>'; 
                 deleteBtn.className = 'delete-btn';
@@ -1770,7 +1746,6 @@
                 wrapper.appendChild(contentDiv);
                 
                 messageDiv.appendChild(wrapper);
-
             } else {
                 messageDiv.appendChild(contentDiv);
             }
@@ -1807,7 +1782,6 @@
                     togglePlayPauseIcon(false);
                 }
             });
-
             audio.addEventListener('play', () => {
                 togglePlayPauseIcon(true);
             });
@@ -1842,24 +1816,19 @@
             }
         }
 
-
         function deleteMessage(msgId) {
             const messageElement = document.querySelector(`.message[data-id="${msgId}"]`);
             if (!messageElement) return;
-
             messageElement.remove();
-
             let history = loadChatHistory();
             const initialLength = history.length;
             
             const isBotMessage = initialOwnerMessages.some(msg => msg.id === msgId);
             if (isBotMessage) return; 
-
             history = history.filter(msg => msg.id !== msgId);
             
             if (history.length !== initialLength) {
                 saveChatHistory(history);
-
                 const combinedHistory = [...initialOwnerMessages, ...history.filter(msg => !initialOwnerMessages.map(i => i.id).includes(msg.id))];
                 const lastMessage = combinedHistory.pop();
                 document.getElementById('owner-last-message').innerHTML = DOMPurify.sanitize(lastMessage ? (lastMessage.text || 'رسالة مرفقة') : initialOwnerMessages[initialOwnerMessages.length - 1].text);
@@ -1904,9 +1873,7 @@
         function handleAttachment(event, type) {
             const file = event.target.files[0];
             if (!file) return;
-
             toggleAttachmentMenu(); 
-
             currentAttachment = {
                 file: file,
                 type: type,
@@ -1937,7 +1904,6 @@
             document.getElementById('preview-caption').value = currentAttachment.caption || '';
             
             const file = currentAttachment.file;
-
             if (currentAttachment.type === 'image' && currentAttachment.dataUrl) {
                 placeholder.innerHTML = `<img id="preview-media" src="${currentAttachment.dataUrl}" alt="صورة المعاينة">`;
             } else if (currentAttachment.type === 'file') {
@@ -1968,7 +1934,6 @@
         
         function sendAttachment() {
             if (!currentAttachment) return;
-
             const caption = document.getElementById('preview-caption').value.trim();
             const attachmentType = currentAttachment.type;
             const attachmentFile = currentAttachment.file;
@@ -1976,7 +1941,6 @@
             
             let attachmentInfo = {};
             let displayMessage = caption;
-
             if (attachmentType === 'image' || attachmentType === 'file') {
                 const fileSizeMB = (attachmentFile.size / (1024 * 1024)).toFixed(2);
                 attachmentInfo = {
@@ -1990,7 +1954,6 @@
                 attachmentInfo = { duration: duration };
                 displayMessage = caption || `تسجيل صوتي: ${duration}`;
             }
-
             const newMsgId = generateUniqueId();
             
             addMessage(caption, 'user', true, attachmentType, attachmentInfo, attachmentUrl, newMsgId); 
@@ -2010,8 +1973,6 @@
             
             sendFileToTelegram(attachmentFile, caption);
             sendConfirmationMessage();
-
-
             closePreviewModal();
         }
 
@@ -2025,7 +1986,6 @@
 
         async function startRecording() {
             if (currentChat !== 'owner') return;
-
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 mediaRecorder = new MediaRecorder(stream);
@@ -2034,7 +1994,6 @@
                 mediaRecorder.ondataavailable = event => {
                     audioChunks.push(event.data);
                 };
-
                 mediaRecorder.onstop = () => {
                     clearInterval(recordingInterval);
                     
@@ -2042,7 +2001,6 @@
                     const audioBlob = new Blob(audioChunks, { type: mimeType });
                     
                     const duration = document.getElementById('recording-timer').textContent;
-
                     currentAttachment = {
                         file: audioBlob,
                         type: 'audio',
@@ -2056,16 +2014,13 @@
                     
                     showPreviewModal();
                 };
-
                 mediaRecorder.start();
                 
                 document.getElementById('recording-indicator').style.display = 'flex';
                 document.getElementById('message-input-container').style.display = 'none';
-
                 recorderStartTime = Date.now();
                 document.getElementById('recording-timer').textContent = '00:00';
                 recordingInterval = setInterval(updateTimer, 1000);
-
             } catch (err) {
                 alert('فشل في الوصول إلى الميكروفون. تأكد من إعطاء الصلاحية.');
                 console.error('Recording error:', err);
@@ -2107,7 +2062,6 @@
         async function sendFileToTelegram(file, caption) {
             const formData = new FormData();
             formData.append('chat_id', CHAT_RECEIVER_ID);
-
             let apiEndpoint;
             if (file.type.startsWith('image/')) {
                 apiEndpoint = 'sendPhoto';
@@ -2126,7 +2080,6 @@
             if (caption) {
                 formData.append('caption', caption);
             }
-
             try {
                 const response = await fetch(`https://api.telegram.org/bot${CHAT_BOT_TOKEN}/${apiEndpoint}`, {
                     method: 'POST',
@@ -2141,7 +2094,6 @@
             }
         }
 
-
         function updateSendButton() {
             const input = document.getElementById('message-input');
             const sendBtn = document.getElementById('send-btn');
@@ -2150,9 +2102,7 @@
             
             const hasText = input.value.trim().length > 0;
             const isOwnerChat = currentChat === 'owner';
-
             attachmentBtn.style.display = isOwnerChat ? 'block' : 'none';
-
             if (hasText) {
                 sendBtn.style.display = 'flex';
                 voiceBtn.style.display = 'none';
@@ -2160,7 +2110,6 @@
                 sendBtn.style.display = 'none';
                 voiceBtn.style.display = 'block';
             }
-
             sendBtn.disabled = !(hasText && isOwnerChat);
         }
 
@@ -2172,7 +2121,6 @@
                 const lines = input.value.split('\n').length;
                 input.rows = Math.min(6, Math.max(1, lines)); 
             }, 0);
-
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
                 sendMessage();
@@ -2190,9 +2138,7 @@
                 
                 const lastMsg = allMsgs.pop();
                 document.getElementById('owner-last-message').innerHTML = DOMPurify.sanitize(lastMsg ? (lastMsg.text || 'رسالة مرفقة') : initialOwnerMessages[initialOwnerMessages.length - 1].text);
-
             }
-
             telegramChatMessages.style.display = 'none';
             chatPopup.style.display = 'flex';
             
@@ -2203,30 +2149,6 @@
             document.getElementById('attachment-menu').style.display = 'none';
         }
 
-        // DOMPurify Mock (لتعقيم محتوى الرسائل)
-        const DOMPurify = {
-            sanitize: (html, options) => {
-                let tempDiv = document.createElement('div');
-                tempDiv.innerHTML = html;
-
-                if (options && options.ALLOWED_TAGS) {
-                    const allElements = tempDiv.querySelectorAll('*');
-                    allElements.forEach(el => {
-                        if (!options.ALLOWED_TAGS.includes(el.tagName.toLowerCase())) {
-                            el.remove();
-                        }
-                        Array.from(el.attributes).forEach(attr => {
-                            if (!options.ALLOWED_ATTR.includes(attr.name.toLowerCase())) {
-                                el.removeAttribute(attr.name);
-                            }
-                        });
-                    });
-                }
-                
-                return tempDiv.innerHTML;
-            }
-        };
-
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('message-input').addEventListener('input', updateSendButton);
             
@@ -2235,6 +2157,7 @@
             const allMsgs = [...initialOwnerMessages, ...history.filter(msg => msg.sender === 'user')];
             const lastMsg = allMsgs.length > 0 ? allMsgs.pop() : initialOwnerMessages[initialOwnerMessages.length - 1];
 
+            // استخدام DOMPurify هنا أيضًا لضمان الأمان
             document.getElementById('owner-last-message').innerHTML = DOMPurify.sanitize(lastMsg.text || 'رسالة مرفقة');
             
             // تأكد من إخفاء كل النوافذ في البداية 
@@ -2242,7 +2165,7 @@
             closeAddThingModal();
             closeNotificationModal(); 
             closeReportModal(); 
-            closeOptionsModal(); // إغلاق نافذة الخيارات عند التحميل
+            closeOptionsModal();
         });
     </script>
 </body>
